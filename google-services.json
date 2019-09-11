@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "692953974782",
+    "firebase_url": "https://traffic-info-8c764.firebaseio.com",
+    "project_id": "traffic-info-8c764",
+    "storage_bucket": "traffic-info-8c764.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:692953974782:android:61a3329e224e9da71262af",
+        "android_client_info": {
+          "package_name": "com.example.goodgame"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "692953974782-q8chnkvl70v31m394cs5tl1kug9612hd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyASFkuwsa36hCf28YkPid68IL2Qoa57Vb8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "692953974782-q8chnkvl70v31m394cs5tl1kug9612hd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
