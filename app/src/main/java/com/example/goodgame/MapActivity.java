@@ -28,11 +28,17 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -52,7 +58,7 @@ public class MapActivity extends AppCompatActivity implements
         OnMapAndViewReadyListener.OnGlobalLayoutAndMapReadyListener, GoogleMap.OnMapClickListener {
 
     private StopDetails stopDetails = new StopDetails();
-
+    private DatabaseReference mDatabase;
 
     private static final LatLng STOP1= new LatLng(-37.798439, 144.964270);
 
@@ -128,8 +134,8 @@ public class MapActivity extends AppCompatActivity implements
         });
 
 
-    }
 
+    }
     @Override
     public void onMapReady(GoogleMap map) {
         mMap = map;
