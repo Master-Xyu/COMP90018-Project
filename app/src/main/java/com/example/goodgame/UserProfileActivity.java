@@ -17,6 +17,5 @@ public class UserProfileActivity extends AppCompatActivity {
             transaction.replace(R.id.Comment_Frame, fragment);
             transaction.commit();
         }
-
     }
 }

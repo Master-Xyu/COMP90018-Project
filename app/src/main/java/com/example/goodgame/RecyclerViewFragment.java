@@ -86,6 +86,7 @@ public class RecyclerViewFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         mAdapter = new CustomAdapter(mDataset);
+        mAdapter.setMcontext(getActivity());
         // Set CustomAdapter as the adapter for RecyclerView.
         mRecyclerView.setAdapter(mAdapter);
         // END_INCLUDE(initializeRecyclerView)

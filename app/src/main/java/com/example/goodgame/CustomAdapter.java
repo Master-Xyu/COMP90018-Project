@@ -18,12 +18,16 @@ package com.example.goodgame;
 
 //import com.example.android.common.logger.Log;
 
+import android.content.DialogInterface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 /**
@@ -34,31 +38,75 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
     private String[] mDataSet;
 
+    private static FragmentActivity mContext;
     // BEGIN_INCLUDE(recyclerViewSampleViewHolder)
     /**
      * Provide a reference to the type of views that you are using (custom ViewHolder)
      */
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView textView;
-
+        private final Button button;
         public ViewHolder(View v) {
             super(v);
             // Define click listener for the ViewHolder's View.
-            v.setOnClickListener(new View.OnClickListener() {
+            /*v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Log.d(TAG, "Element " + getAdapterPosition() + " clicked.");
                 }
             });
+             */
+
+
             textView = (TextView) v.findViewById(R.id.textView);
+            button = (Button) v.findViewById(R.id.delete);
+
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    showNormalDialog();
+                }
+            });
         }
 
         public TextView getTextView() {
             return textView;
         }
+
+        private void showNormalDialog(){
+            /* @setIcon 设置对话框图标
+             * @setTitle 设置对话框标题
+             * @setMessage 设置对话框消息提示
+             * setXXX方法返回Dialog对象，因此可以链式设置属性
+             */
+            final AlertDialog.Builder normalDialog =
+                    new AlertDialog.Builder(mContext);
+            normalDialog.setTitle("");
+            normalDialog.setMessage("Are you sure to delete this comment?");
+            normalDialog.setPositiveButton("Continue",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //...To-do
+                        }
+                    });
+            normalDialog.setNegativeButton("Cancel",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //...To-do
+                        }
+                    });
+            // 显示
+            normalDialog.show();
+        }
+
     }
     // END_INCLUDE(recyclerViewSampleViewHolder)
 
+    public void setMcontext(FragmentActivity context){
+        this.mContext = context;
+    }
     /**
      * Initialize the dataset of the Adapter.
      *
@@ -74,7 +122,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         // Create a new view.
         View v = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.text_row_item, viewGroup, false);
+                .inflate(R.layout.comment_row, viewGroup, false);
 
         return new ViewHolder(v);
     }
