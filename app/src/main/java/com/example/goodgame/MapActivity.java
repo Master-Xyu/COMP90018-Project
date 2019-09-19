@@ -28,24 +28,37 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
+
+import android.util.Log;
 import android.view.View;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.Button;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 /**
  * This shows how to place markers on a map.
@@ -57,15 +70,21 @@ public class MapActivity extends AppCompatActivity implements
         OnInfoWindowCloseListener,
         OnMapAndViewReadyListener.OnGlobalLayoutAndMapReadyListener, GoogleMap.OnMapClickListener {
 
-    private StopDetails stopDetails = new StopDetails();
-    private DatabaseReference mDatabase;
+    String TAG = "MapActivity";
+    FirebaseFirestore db;
+
+    static ArrayList<JSONObject> stopArray;
+    ArrayList<Integer> idArray;
+    ArrayList<String> nameArray;
+    ArrayList<String> descriptionArray;
+    ArrayList<LatLng> positionArray;
 
     private static final LatLng STOP1= new LatLng(-37.798439, 144.964270);
 
     private static final LatLng STOP3 = new LatLng(-37.801865, 144.963606);
 
     private static final LatLng STOP4 = new LatLng(-37.805391, 144.963094);
-    //flinders st
+
     private static final LatLng STOP5 = new LatLng(-37.805391, 144.963094);
 
     private static final LatLng STOP7 = new LatLng(-37.807708, 144.962901);
@@ -98,6 +117,17 @@ public class MapActivity extends AppCompatActivity implements
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        db = FirebaseFirestore.getInstance();
+
+        stopArray= new ArrayList<JSONObject>();
+
+        idArray= new ArrayList<Integer>();
+        nameArray= new ArrayList<String>();
+        descriptionArray= new ArrayList<String>();
+        positionArray= new ArrayList<LatLng>();
+
+        ReadFromDatabase();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
@@ -133,15 +163,14 @@ public class MapActivity extends AppCompatActivity implements
             }
         });
 
-
-
     }
+
     @Override
     public void onMapReady(GoogleMap map) {
         mMap = map;
 
         // Hide the zoom controls as the button panel will cover it.
-        mMap.getUiSettings().setZoomControlsEnabled(true);
+        mMap.getUiSettings().setZoomControlsEnabled(false);
 
         // Add lots of markers to the map.
         addMarkersToMap();
@@ -158,7 +187,9 @@ public class MapActivity extends AppCompatActivity implements
         // Ideally this string would be localised.
         mMap.setContentDescription("Map with lots of markers.");
 
+
         LatLngBounds bounds = new LatLngBounds.Builder()
+                //.include(positionArray.get(0))
                 .include(STOP1)
                 .include(STOP3)
                 .include(STOP4)
@@ -173,8 +204,10 @@ public class MapActivity extends AppCompatActivity implements
     }
 
     private void addMarkersToMap() {
+
         // Uses a colored icon.
         m1 = mMap.addMarker(new MarkerOptions()
+                //.position(positionArray.get(0))
                 .position(STOP1)
                 .title("Melbourne University")
                 .snippet("Stop 1")
@@ -237,7 +270,6 @@ public class MapActivity extends AppCompatActivity implements
                 .infoWindowAnchor(0.5f, 0.5f));
          */
     }
-
 
 
     @Override
@@ -311,6 +343,54 @@ public class MapActivity extends AppCompatActivity implements
         Toast.makeText(this, "Info Window long click", Toast.LENGTH_SHORT).show();
     }
 
+    private void ReadFromDatabase() {
+        CollectionReference collectionReference = db.collection("stopInfo");
+        collectionReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                while (true) {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            //JSONObject stopInfo = new JSONObject();
+                            //JSONObject stop = new JSONObject();
 
+                            int id = Integer.parseInt(document.getId());
+                            idArray.add(id);
+                            String name = (String)document.get("name");
+                            nameArray.add(name);
+                            String description = (String)document.get("description");
+                            descriptionArray.add("description");
+
+                            GeoPoint geoPoint = document.getGeoPoint("coordinate");
+                            double lat = geoPoint.getLatitude();
+                            double lng = geoPoint.getLongitude ();
+                            LatLng latLng = new LatLng(lat, lng);
+                            positionArray.add(latLng);
+
+                            /*
+                            try {
+                                stop.put("name", document.get("name"));
+                                stop.put("description",document.get("description"));
+                                stopInfo.put("id", document.getId());
+                                stopInfo.put("info", stop);
+
+
+                                stopArray.add(stopInfo);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                             */
+                        }
+                    }
+                    if (task.isComplete()){
+
+
+                        break;
+                    }
+                }
+            }
+        });
+    }
 
 }

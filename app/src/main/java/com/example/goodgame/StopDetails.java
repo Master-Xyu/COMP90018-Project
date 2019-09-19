@@ -23,9 +23,10 @@ public class StopDetails {
 
     }
 
-    final FirebaseDatabase database = FirebaseDatabase.getInstance();
+    //final FirebaseDatabase database = FirebaseDatabase.getInstance();
     {
-        DatabaseReference ref = database.getReference("server/saving-data/fireblog/posts");
+        //DatabaseReference ref = database.getReference("server/saving-data/fireblog/posts");
+        //DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
     }
 
     public LatLng getCoordinate() {
