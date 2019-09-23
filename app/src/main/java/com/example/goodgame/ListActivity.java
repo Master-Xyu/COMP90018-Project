@@ -104,7 +104,8 @@ public class ListActivity extends AppCompatActivity {
             //Whenever the location is updated, the last method checks if the gps is turned off.
             @Override
             public void onLocationChanged(Location location) {
-                textView.append("\n"+location.getLatitude()+location.getLongitude());
+                textView.append("\n" + "Latitude: " + location.getLatitude()
+                        + "\n" + "Longitude: " + location.getLongitude());
             }
 
             @Override
@@ -131,13 +132,12 @@ public class ListActivity extends AppCompatActivity {
                 }, 10);
                 return;
             }
-        } else {
-            locationManager.requestLocationUpdates("gps", 5000, 0, locationListener);
-
         }
+        locationManager.requestLocationUpdates("gps", 5000, 0, locationListener);
+
     }
 
-
+/*
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode){
             case 10:
@@ -146,6 +146,8 @@ public class ListActivity extends AppCompatActivity {
                 return;
         }
     }
+
+ */
 
 
 
