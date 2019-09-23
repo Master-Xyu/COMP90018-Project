@@ -378,14 +378,12 @@ public class MapActivity extends AppCompatActivity implements
                              */
                         }
                     }
-                    if (task.isComplete()){
 
-
-                        break;
-                    }
                 }
             }
         });
+        System.out.println("@@@@@@@@@@@@@@@@@@@");
+        System.out.println(idArray.size());
     }
 
 }
