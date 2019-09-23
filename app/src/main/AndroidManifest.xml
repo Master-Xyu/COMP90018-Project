@@ -11,7 +11,8 @@
         android:icon="@mipmap/ic_launcher"
         android:label="Tram Map"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:name="com.example.goodgame.BaseApplication">
 
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -25,7 +26,11 @@
         <activity android:name=".ListActivity"/>
         <activity android:name=".UserProfileActivity"/>
         <activity android:name=".MapActivity" />
-
+        <activity
+            android:name="com.example.goodgame.Float.FloatActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:launchMode="standard"
+            android:windowSoftInputMode="stateHidden|stateAlwaysHidden"/>
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyBdNklPD089oeu4BlEuax1S1wY1LVddHRo" />
@@ -39,6 +44,6 @@
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
 </manifest>

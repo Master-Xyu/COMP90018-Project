@@ -52,6 +52,7 @@
 
     </LinearLayout>
 
+    <!--
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
@@ -59,6 +60,6 @@
         android:layout_gravity="bottom|right"
         android:clickable="true"
         tools:srcCompat="@tools:sample/avatars" />
-
+    -->
 
 </LinearLayout>

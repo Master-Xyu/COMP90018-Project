@@ -16,6 +16,19 @@
 
 package com.example.goodgame;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
+import android.view.View;
+import android.view.animation.BounceInterpolator;
+import android.view.animation.Interpolator;
+import android.widget.Button;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
@@ -29,33 +42,13 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.SystemClock;
-
-import android.util.Log;
-import android.view.View;
-import android.view.animation.BounceInterpolator;
-import android.view.animation.Interpolator;
-import android.widget.Button;
-import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -135,6 +128,7 @@ public class MapActivity extends AppCompatActivity implements
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         new OnMapAndViewReadyListener(mapFragment, this);
 
+        /*
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -144,6 +138,7 @@ public class MapActivity extends AppCompatActivity implements
 
             }
         });
+        */
 
         Button btnMap = (Button) findViewById(R.id.btnMap);
         btnMap.setOnClickListener(new View.OnClickListener() {
