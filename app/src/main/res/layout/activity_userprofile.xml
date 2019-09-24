@@ -21,11 +21,11 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="Profile:"
+                android:text="Avatar:"
                 android:textSize="30sp" />
 
             <ImageView
-                android:id="@+id/imageView"
+                android:id="@+id/avatar"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -56,18 +56,19 @@
                 android:textSize="30sp" />
 
             <TextView
-                android:id="@+id/textView3"
+                android:id="@+id/email"
                 android:layout_width="210dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text=""
-                android:textSize="30sp"
-                android:background="@drawable/border"
                 android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
                 android:layout_marginRight="20dp"
                 android:layout_marginBottom="20dp"
-                android:layout_marginTop="20dp"/>
+                android:layout_weight="1"
+                android:background="@drawable/border"
+                android:editable="false"
+                android:gravity="center"
+                android:text=""
+                android:textSize="30sp" />
 
         </LinearLayout>
 
@@ -86,18 +87,19 @@
                 android:textSize="30sp" />
 
             <TextView
-                android:id="@+id/textView5"
+                android:id="@+id/name"
                 android:layout_width="210dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text=""
-                android:gravity="center"
-                android:textSize="30sp"
-                android:background="@drawable/border"
                 android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
                 android:layout_marginRight="20dp"
                 android:layout_marginBottom="20dp"
-                android:layout_marginTop="20dp"/>
+                android:layout_weight="1"
+                android:background="@drawable/border"
+                android:editable="true"
+                android:gravity="center"
+                android:text=""
+                android:textSize="30sp" />
         </LinearLayout>
     </LinearLayout>
 
