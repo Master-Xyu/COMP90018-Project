@@ -16,6 +16,19 @@
 
 package com.example.goodgame;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
+import android.view.View;
+import android.view.animation.BounceInterpolator;
+import android.view.animation.Interpolator;
+import android.widget.Button;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
@@ -30,35 +43,19 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.SystemClock;
-
-import android.util.Log;
-import android.view.View;
-import android.view.animation.BounceInterpolator;
-import android.view.animation.Interpolator;
-import android.widget.Button;
-import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This shows how to place markers on a map.
@@ -71,13 +68,9 @@ public class MapActivity extends AppCompatActivity implements
         OnMapAndViewReadyListener.OnGlobalLayoutAndMapReadyListener, GoogleMap.OnMapClickListener {
 
     String TAG = "MapActivity";
-    FirebaseFirestore db;
+    private FirebaseFirestore db;
 
-    static ArrayList<JSONObject> stopArray;
-    ArrayList<Integer> idArray;
-    ArrayList<String> nameArray;
-    ArrayList<String> descriptionArray;
-    ArrayList<LatLng> positionArray;
+    private ArrayList<String> nameArray = new ArrayList<String>();
 
     private static final LatLng STOP1= new LatLng(-37.798439, 144.964270);
 
@@ -118,15 +111,23 @@ public class MapActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         db = FirebaseFirestore.getInstance();
+        db.collection("stopInfo").get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        if(!queryDocumentSnapshots.isEmpty()){
+                            List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
+                            for(DocumentSnapshot d : list){
+                                String name = d.getString("name");
+                                nameArray.add(name);
+                            }
+                        }
+                    }
+                });
+        System.out.println("&&&&&&&&&&&&&&");
+        System.out.println(nameArray.size());
+        System.out.println("&&&&&&&&&&&&&&");
 
-        stopArray= new ArrayList<JSONObject>();
-
-        idArray= new ArrayList<Integer>();
-        nameArray= new ArrayList<String>();
-        descriptionArray= new ArrayList<String>();
-        positionArray= new ArrayList<LatLng>();
-
-        ReadFromDatabase();
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
@@ -135,6 +136,7 @@ public class MapActivity extends AppCompatActivity implements
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         new OnMapAndViewReadyListener(mapFragment, this);
 
+        /*
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -144,6 +146,7 @@ public class MapActivity extends AppCompatActivity implements
 
             }
         });
+        */
 
         Button btnMap = (Button) findViewById(R.id.btnMap);
         btnMap.setOnClickListener(new View.OnClickListener() {
@@ -163,13 +166,15 @@ public class MapActivity extends AppCompatActivity implements
             }
         });
 
+
+
     }
 
     @Override
     public void onMapReady(GoogleMap map) {
         mMap = map;
 
-        // Hide the zoom controls as the button panel will cover it.
+        // Hide the zoom controls as the button will cover it.
         mMap.getUiSettings().setZoomControlsEnabled(false);
 
         // Add lots of markers to the map.
@@ -343,52 +348,7 @@ public class MapActivity extends AppCompatActivity implements
         Toast.makeText(this, "Info Window long click", Toast.LENGTH_SHORT).show();
     }
 
-    private void ReadFromDatabase() {
-        CollectionReference collectionReference = db.collection("stopInfo");
-        collectionReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                while (true) {
-                    if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            //JSONObject stopInfo = new JSONObject();
-                            //JSONObject stop = new JSONObject();
-
-                            int id = Integer.parseInt(document.getId());
-                            idArray.add(id);
-                            String name = (String)document.get("name");
-                            nameArray.add(name);
-                            String description = (String)document.get("description");
-                            descriptionArray.add("description");
-
-                            GeoPoint geoPoint = document.getGeoPoint("coordinate");
-                            double lat = geoPoint.getLatitude();
-                            double lng = geoPoint.getLongitude ();
-                            LatLng latLng = new LatLng(lat, lng);
-                            positionArray.add(latLng);
-
-                            /*
-                            try {
-                                stop.put("name", document.get("name"));
-                                stop.put("description",document.get("description"));
-                                stopInfo.put("id", document.getId());
-                                stopInfo.put("info", stop);
 
 
-                                stopArray.add(stopInfo);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-
-                             */
-                        }
-                    }
-
-                }
-            }
-        });
-        System.out.println("@@@@@@@@@@@@@@@@@@@");
-        System.out.println(idArray.size());
-    }
 
 }

@@ -8,21 +8,19 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.view.View;
-
 import android.widget.Button;
 import android.widget.TextView;
-
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -31,6 +29,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class ListActivity extends AppCompatActivity {
@@ -38,10 +37,10 @@ public class ListActivity extends AppCompatActivity {
     private static final String name = "Name";
     private static final String description = "Description";
     private static final Boolean isFreeZone = false;
-    private FirebaseFirestore db;
-    private TextView textDisplay;
-    private ArrayList<JSONObject> stopArray;
-
+    FirebaseFirestore db;
+    TextView textDisplay;
+    String TAG = "ListActivity";
+    ArrayList<JSONObject> stopArray= new ArrayList<>();
     private TextView textView;
     private LocationListener locationListener;
     private LocationManager locationManager;
@@ -51,13 +50,32 @@ public class ListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         db = FirebaseFirestore.getInstance();
+
         stopArray = new ArrayList<>();
-        ReadSingleContact();
+        //ReadSingleContact();
+
+        db.collection("stopInfo").get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        if (!queryDocumentSnapshots.isEmpty()) {
+                            StringBuilder fields = new StringBuilder("");
+                            List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
+                            for (DocumentSnapshot d : list) {
+                                fields.append("Name: ").append(d.getString("name"));
+                                fields.append("\nDescription: ").append(d.getString("description")).append("\n");
+                                fields.append("\n");
+                            }
+                            textDisplay.setText(fields.toString());
+                        }
+                    }
+                });
+
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
 
-        //add floating button
+        /*
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,8 +85,8 @@ public class ListActivity extends AppCompatActivity {
 
             }
         });
+        */
 
-        //add the top two buttons
         Button btnMap = (Button) findViewById(R.id.btnMap);
         btnMap.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,25 +105,23 @@ public class ListActivity extends AppCompatActivity {
             }
         });
 
-        //add text read from the database
         textDisplay = findViewById(R.id.textView);
         textDisplay.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View view) {
                 Intent intent4 = new Intent(ListActivity.this, DetailActivity.class);
                 startActivity(intent4);
             }
         });
-        textView = (TextView)findViewById(R.id.textView7);
+
+        textView = (TextView) findViewById(R.id.textView7);
         //using gps
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         locationListener = new LocationListener() {
             //Whenever the location is updated, the last method checks if the gps is turned off.
             @Override
             public void onLocationChanged(Location location) {
-                textView.append("\n" + "Latitude: " + location.getLatitude()
-                        + "\n" + "Longitude: " + location.getLongitude());
+                textView.append("\n" + location.getLatitude() + location.getLongitude());
             }
 
             @Override
@@ -120,9 +136,11 @@ public class ListActivity extends AppCompatActivity {
 
             @Override
             public void onProviderDisabled(String s) {
-                Intent intent5 = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                startActivity(intent5);
+                Intent intent4 = new Intent(ListActivity.this, DetailActivity.class);
+                startActivity(intent4);
             }
+
+
         };
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -134,24 +152,7 @@ public class ListActivity extends AppCompatActivity {
             }
         }
         locationManager.requestLocationUpdates("gps", 5000, 0, locationListener);
-
     }
-
-/*
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        switch (requestCode){
-            case 10:
-                if(grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                    locationManager.requestLocationUpdates("gps", 5000, 0, locationListener);
-                return;
-        }
-    }
-
- */
-
-
-
-
 
     private void ReadSingleContact() {
         CollectionReference collectionReference = db.collection("stopInfo");
@@ -169,21 +170,23 @@ public class ListActivity extends AppCompatActivity {
                         fields.append("\nDescription: ").append(document.get("description")).append("\n");
                         fields.append("\n");
 
-
                         try {
                             stop.put("name", document.get("name"));
+                            stop.put("description",document.get("description"));
                             stopInfo.put("id",document.getId());
                             stopInfo.put("info", stop);
-                            stopArray.add(stopInfo);
 
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+
                     }
                     textDisplay.setText(fields.toString());
                 }
             }
         });
+
     }
+
 
 }
