@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -24,36 +25,36 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.maps.android.SphericalUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
 
 public class ListActivity extends AppCompatActivity {
 
-    private static final String name = "Name";
-    private static final String description = "Description";
-    private static final Boolean isFreeZone = false;
+
     FirebaseFirestore db;
-    TextView textDisplay;
-    String TAG = "ListActivity";
-    ArrayList<JSONObject> stopArray= new ArrayList<>();
-    private TextView textView;
+    private TextView StopDisplay;
+    private TextView GPSDisplay;
     private LocationListener locationListener;
     private LocationManager locationManager;
+    private static LatLng myLocation;
 
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         db = FirebaseFirestore.getInstance();
-
-        stopArray = new ArrayList<>();
-        //ReadSingleContact();
-
+/*
         db.collection("stopInfo").get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
@@ -70,22 +71,11 @@ public class ListActivity extends AppCompatActivity {
                         }
                     }
                 });
-
+ */
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
 
-        /*
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent1 = new Intent(ListActivity.this, UserProfileActivity.class);
-                startActivity(intent1);
-
-            }
-        });
-        */
 
         Button btnMap = (Button) findViewById(R.id.btnMap);
         btnMap.setOnClickListener(new View.OnClickListener() {
@@ -105,8 +95,8 @@ public class ListActivity extends AppCompatActivity {
             }
         });
 
-        textDisplay = findViewById(R.id.textView);
-        textDisplay.setOnClickListener(new View.OnClickListener() {
+        StopDisplay = findViewById(R.id.textView);
+        StopDisplay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent4 = new Intent(ListActivity.this, DetailActivity.class);
@@ -114,14 +104,23 @@ public class ListActivity extends AppCompatActivity {
             }
         });
 
-        textView = (TextView) findViewById(R.id.textView7);
+        GPSDisplay = (TextView) findViewById(R.id.textView7);
         //using gps
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         locationListener = new LocationListener() {
             //Whenever the location is updated, the last method checks if the gps is turned off.
             @Override
             public void onLocationChanged(Location location) {
-                textView.append("\n" + location.getLatitude() + location.getLongitude());
+                //GPSDisplay.append("\n" + location.getLatitude() + location.getLongitude());
+                myLocation = new LatLng(location.getLatitude(),location.getLongitude());
+                StringBuilder fields = new StringBuilder("");
+                int[] id = sortLocation(myLocation);
+                for (int i = 0; i<id.length; i++){
+                    fields.append("Name: ").append(StopDetailsList.STOPS[i].getName());
+                    fields.append("\nDescription: ").append(StopDetailsList.STOPS[i].getDescription()).append("\n");
+                    fields.append("\n");
+                }
+                StopDisplay.setText(fields.toString());
             }
 
             @Override
@@ -154,39 +153,25 @@ public class ListActivity extends AppCompatActivity {
         locationManager.requestLocationUpdates("gps", 5000, 0, locationListener);
     }
 
-    private void ReadSingleContact() {
-        CollectionReference collectionReference = db.collection("stopInfo");
-        collectionReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
 
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    StringBuilder fields = new StringBuilder("");
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        JSONObject stopInfo = new JSONObject();
-                        JSONObject stop = new JSONObject();
+    public int[] sortLocation(LatLng currentLocation){
+        double[] dis = new double[StopDetailsList.STOPS.length];
+        int[] index = new int[dis.length];
+        HashMap map = new HashMap();
+        for (int i = 0; i < dis.length; i++){
+            dis[i] = SphericalUtil.computeDistanceBetween(currentLocation, StopDetailsList.STOPS[i].getPosition());
+            map.put(dis[i], i);
+        }
+        Arrays.sort(dis); // 升序排列
 
-                        fields.append("Name: ").append(document.get("name"));
-                        fields.append("\nDescription: ").append(document.get("description")).append("\n");
-                        fields.append("\n");
-
-                        try {
-                            stop.put("name", document.get("name"));
-                            stop.put("description",document.get("description"));
-                            stopInfo.put("id",document.getId());
-                            stopInfo.put("info", stop);
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                    }
-                    textDisplay.setText(fields.toString());
-                }
-            }
-        });
-
+        // 查找原始下标
+        for (int i = 0; i < dis.length; i++) {
+            index[i] = (int) map.get(dis[i]);
+        }
+        return index;
     }
+
+
 
 
 }

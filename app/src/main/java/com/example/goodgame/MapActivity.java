@@ -1,22 +1,12 @@
-/*
- * Copyright (C) 2012 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.example.goodgame;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -27,6 +17,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -36,13 +27,13 @@ import com.google.android.gms.maps.GoogleMap.OnInfoWindowCloseListener;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowLongClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
@@ -65,69 +56,61 @@ public class MapActivity extends AppCompatActivity implements
         OnInfoWindowClickListener,
         OnInfoWindowLongClickListener,
         OnInfoWindowCloseListener,
-        OnMapAndViewReadyListener.OnGlobalLayoutAndMapReadyListener, GoogleMap.OnMapClickListener {
+        OnMapAndViewReadyListener.OnGlobalLayoutAndMapReadyListener,
+        GoogleMap.OnMapClickListener {
 
     String TAG = "MapActivity";
     private FirebaseFirestore db;
+    private LocationListener locationListener;
+    private LocationManager locationManager;
 
-    private ArrayList<String> nameArray = new ArrayList<String>();
+    private static LatLng myLocation;
 
-    private static final LatLng STOP1= new LatLng(-37.798439, 144.964270);
+    private int[]score={20,30,40,50,60,70,80,90};
 
-    private static final LatLng STOP3 = new LatLng(-37.801865, 144.963606);
-
-    private static final LatLng STOP4 = new LatLng(-37.805391, 144.963094);
-
-    private static final LatLng STOP5 = new LatLng(-37.805391, 144.963094);
-
-    private static final LatLng STOP7 = new LatLng(-37.807708, 144.962901);
-
-    private static final LatLng STOP8 = new LatLng(-37.810035, 144.964371);
-
-    private static final LatLng STOP10 = new LatLng(-37.812699, 144.965442);
-
-    private static final LatLng STOP11 = new LatLng(-37.815932, 144.966946);
-
-    private static final LatLng STOP13 = new LatLng(-37.817486, 144.966914);
-
-
-    private Marker m1;
-    private Marker m3;
-    private Marker m4;
-    private Marker m7;
-    private Marker m8;
-    private Marker m10;
-    private Marker m11;
-    private Marker m13;
     private Marker mSelectedMarker;
 
     private GoogleMap mMap;
 
-    /**
-     * Keeps track of the last selected marker (though it may no longer be selected).  This is
-     * useful for refreshing the info window.
-     */
-
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         db = FirebaseFirestore.getInstance();
+        /*
         db.collection("stopInfo").get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                         if(!queryDocumentSnapshots.isEmpty()){
                             List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
-                            for(DocumentSnapshot d : list){
-                                String name = d.getString("name");
-                                nameArray.add(name);
+                            for(DocumentSnapshot d : list) {
+                                StopDetails s = d.toObject(StopDetails.class);
+                                stopList.add(s);
                             }
                         }
                     }
                 });
-        System.out.println("&&&&&&&&&&&&&&");
-        System.out.println(nameArray.size());
-        System.out.println("&&&&&&&&&&&&&&");
 
+         */
+        /*
+        db.collection("stopInfo").get().
+                addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful() && task.getResult() != null) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                StopDetails s = document.toObject(StopDetails.class);
+                                stopList.add(s);
+                            }
+                            System.out.println("&&&&&&&&&&&&&&&&&");
+                            System.out.println(stopList.size());
+                            System.out.println(stopList.get(0).getFreeZone());
+                            System.out.println("&&&&&&&&&&&&&&&&&");
+                        }
+                    }
+                });
+
+         */
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
@@ -136,17 +119,6 @@ public class MapActivity extends AppCompatActivity implements
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         new OnMapAndViewReadyListener(mapFragment, this);
 
-        /*
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent1 = new Intent(MapActivity.this, UserProfileActivity.class);
-                startActivity(intent1);
-
-            }
-        });
-        */
 
         Button btnMap = (Button) findViewById(R.id.btnMap);
         btnMap.setOnClickListener(new View.OnClickListener() {
@@ -166,8 +138,44 @@ public class MapActivity extends AppCompatActivity implements
             }
         });
 
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                myLocation = new LatLng(location.getLatitude(),location.getLongitude());
+                LatLngBounds bounds = new LatLngBounds.Builder()
+                        .include(myLocation)
+                        .build();
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bounds.getCenter(), 15));
 
+            }
 
+            @Override
+            public void onStatusChanged(String s, int i, Bundle bundle) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String s) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String s) {
+                Intent intent4 = new Intent(MapActivity.this, DetailActivity.class);
+                startActivity(intent4);
+            }
+        };
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{
+                        Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
+                        Manifest.permission.INTERNET
+                }, 10);
+                return;
+            }
+        }
+        locationManager.requestLocationUpdates("gps", 5000, 0, locationListener);
     }
 
     @Override
@@ -177,103 +185,53 @@ public class MapActivity extends AppCompatActivity implements
         // Hide the zoom controls as the button will cover it.
         mMap.getUiSettings().setZoomControlsEnabled(false);
 
-        // Add lots of markers to the map.
-        addMarkersToMap();
-
-
         // Set listeners for marker events.  See the bottom of this class for their behavior.
         mMap.setOnMarkerClickListener(this);
         mMap.setOnMapClickListener(this);
         mMap.setOnInfoWindowClickListener(this);
         mMap.setOnInfoWindowCloseListener(this);
         mMap.setOnInfoWindowLongClickListener(this);
+        mMap.setMyLocationEnabled(true);
 
         // Override the default content description on the view, for accessibility mode.
         // Ideally this string would be localised.
         mMap.setContentDescription("Map with lots of markers.");
 
+        addMarkersToMap();
 
-        LatLngBounds bounds = new LatLngBounds.Builder()
-                //.include(positionArray.get(0))
-                .include(STOP1)
-                .include(STOP3)
-                .include(STOP4)
-                .include(STOP7)
-                .include(STOP8)
-                .include(STOP10)
-                .include(STOP11)
-                .include(STOP13)
 
-                .build();
-        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50));
     }
 
     private void addMarkersToMap() {
-
-        // Uses a colored icon.
-        m1 = mMap.addMarker(new MarkerOptions()
-                //.position(positionArray.get(0))
-                .position(STOP1)
-                .title("Melbourne University")
-                .snippet("Stop 1")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
-
-        // Uses a colored icon.
-        m3 = mMap.addMarker(new MarkerOptions()
-                .position(STOP3)
-                .title("Lincoln Square")
-                .snippet("Stop 3")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-
-        // Uses a colored icon.
-        m4 = mMap.addMarker(new MarkerOptions()
-                .position(STOP4)
-                .title("Queensberry St & Swanston St")
-                .snippet("Stop 4")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-
-        // Uses a colored icon.
-        m7 = mMap.addMarker(new MarkerOptions()
-                .position(STOP7)
-                .title("RMIT University")
-                .snippet("Stop 7")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-
-        m8 = mMap.addMarker(new MarkerOptions()
-                .position(STOP8)
-                .title("Melbourne Central Station")
-                .snippet("Stop 8 <Free Tram Zone>")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-
-        m10 = mMap.addMarker(new MarkerOptions()
-                .position(STOP10)
-                .title("Bourke Street Mall")
-                .snippet("Stop 10 <Free Tram Zone>")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-
-        m11 = mMap.addMarker(new MarkerOptions()
-                .position(STOP11)
-                .title("Collins St & Swanston St")
-                .snippet("Stop 11 <Free Tram Zone>")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-
-        m13 = mMap.addMarker(new MarkerOptions()
-                .position(STOP13)
-                .title("Flinders Street Station")
-                .snippet("Stop 13")
-                .snippet("<Free Tram Zone>")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+        //if (name.size()==0 )
+        //    return;
+        for (int i=0; i<StopDetailsList.STOPS.length;i++){
+            Marker m = mMap.addMarker(new MarkerOptions()
+                    .position(StopDetailsList.STOPS[i].getPosition())
+                    .title(StopDetailsList.STOPS[i].getName())
+                    .snippet(StopDetailsList.STOPS[i].getDescription())
+                    //.title(stopList.get(i).getName())
+                    //.snippet(stopList.get(i).getDescription())
+                    .icon(getIcon(score[i])));
+                    //.infoWindowAnchor(0.5f, 0.5f));
+        }
+    }
 
 
-        /**
-        // Uses a custom icon with the info window popping out of the center of the icon.
-        mSydney = mMap.addMarker(new MarkerOptions()
-                .position(SYDNEY)
-                .title("Sydney")
-                .snippet("Population: 4,627,300")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.arrow))
-                .infoWindowAnchor(0.5f, 0.5f));
-         */
+    public BitmapDescriptor getIcon(int score){
+        if (score<=30){
+            //safe
+
+            //.icon(BitmapDescriptorFactory.fromResource(R.drawable.arrow)) //using custom icon
+            return BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
+        }
+        else if(score>30 && score<80){
+            return BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE);
+        }
+        else{
+            //dangerous
+            return BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
+        }
     }
 
 
@@ -312,13 +270,7 @@ public class MapActivity extends AppCompatActivity implements
             }
         });
         if (marker.equals(mSelectedMarker)) {
-            // The showing info window has already been closed - that's the first thing to happen
-            // when any marker is clicked.
-            // Return true to indicate we have consumed the event and that we do not want the
-            // the default behavior to occur (which is for the camera to move such that the
-            // marker is centered and for the marker's info window to open, if it has one).
             mSelectedMarker = null;
-
             return true;
         }
 
@@ -347,7 +299,6 @@ public class MapActivity extends AppCompatActivity implements
     public void onInfoWindowLongClick(Marker marker) {
         Toast.makeText(this, "Info Window long click", Toast.LENGTH_SHORT).show();
     }
-
 
 
 
