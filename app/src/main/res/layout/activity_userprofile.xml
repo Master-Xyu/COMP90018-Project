@@ -21,15 +21,17 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="Profile:"
+                android:text="Avatar:"
                 android:textSize="30sp" />
 
             <ImageView
-                android:id="@+id/imageView"
+                android:id="@+id/avatar"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                tools:srcCompat="@tools:sample/avatars" />
+                android:onClick="switchAvatar"
+                app:srcCompat="@drawable/default_avatar"
+                tools:srcCompat="@drawable/default_avatar" />
 
             <Button
                 android:id="@+id/update"
@@ -56,18 +58,19 @@
                 android:textSize="30sp" />
 
             <TextView
-                android:id="@+id/textView3"
+                android:id="@+id/email"
                 android:layout_width="210dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text=""
-                android:textSize="30sp"
-                android:background="@drawable/border"
                 android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
                 android:layout_marginRight="20dp"
                 android:layout_marginBottom="20dp"
-                android:layout_marginTop="20dp"/>
+                android:layout_weight="1"
+                android:background="@drawable/border"
+                android:editable="false"
+                android:gravity="center"
+                android:text=""
+                android:textSize="30sp" />
 
         </LinearLayout>
 
@@ -85,19 +88,19 @@
                 android:text="Name:"
                 android:textSize="30sp" />
 
-            <TextView
-                android:id="@+id/textView5"
+            <EditText
+                android:id="@+id/name"
                 android:layout_width="210dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text=""
-                android:gravity="center"
-                android:textSize="30sp"
-                android:background="@drawable/border"
                 android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
                 android:layout_marginRight="20dp"
                 android:layout_marginBottom="20dp"
-                android:layout_marginTop="20dp"/>
+                android:layout_weight="1"
+                android:background="@drawable/border"
+                android:gravity="center"
+                android:text=""
+                android:textSize="30sp" />
         </LinearLayout>
     </LinearLayout>
 
@@ -107,4 +110,5 @@
         android:layout_height="match_parent">
 
     </FrameLayout>
+
 </LinearLayout>
