@@ -28,7 +28,7 @@ public class BaseApplication extends Application {
         super.onCreate();
 
         ImageView imageView = new ImageView(getApplicationContext());
-        imageView.setImageResource(R.drawable.icon);
+        imageView.setImageResource(R.drawable.default_avatar);
 
         FloatWindow
                 .with(getApplicationContext())
