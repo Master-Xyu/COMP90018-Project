@@ -15,6 +15,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -43,11 +45,13 @@ public class ListActivity extends AppCompatActivity {
 
 
     FirebaseFirestore db;
-    private TextView StopDisplay;
-    private TextView GPSDisplay;
     private LocationListener locationListener;
     private LocationManager locationManager;
     private static LatLng myLocation;
+
+    private ArrayList<String> mName = new ArrayList<>();
+    private ArrayList<String> mDescription = new ArrayList<>();
+    private ArrayList<String> mDistance = new ArrayList<>();
 
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -95,32 +99,43 @@ public class ListActivity extends AppCompatActivity {
             }
         });
 
-        StopDisplay = findViewById(R.id.textView);
-        StopDisplay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent4 = new Intent(ListActivity.this, DetailActivity.class);
-                startActivity(intent4);
-            }
-        });
 
-        GPSDisplay = (TextView) findViewById(R.id.textView7);
+
         //using gps
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         locationListener = new LocationListener() {
             //Whenever the location is updated, the last method checks if the gps is turned off.
             @Override
             public void onLocationChanged(Location location) {
-                //GPSDisplay.append("\n" + location.getLatitude() + location.getLongitude());
                 myLocation = new LatLng(location.getLatitude(),location.getLongitude());
-                StringBuilder fields = new StringBuilder("");
-                int[] id = sortLocation(myLocation);
-                for (int i = 0; i<id.length; i++){
-                    fields.append("Name: ").append(StopDetailsList.STOPS[i].getName());
-                    fields.append("\nDescription: ").append(StopDetailsList.STOPS[i].getDescription()).append("\n");
-                    fields.append("\n");
+                mName.clear();
+                mDistance.clear();
+                mDescription.clear();
+                double[] dis = new double[StopDetailsList.STOPS.length];
+                int[] index = new int[dis.length];
+                HashMap map = new HashMap();
+                for (int i = 0; i < dis.length; i++){
+                    dis[i] = SphericalUtil.computeDistanceBetween(myLocation, StopDetailsList.STOPS[i].getPosition());
+                    map.put(dis[i], i);
                 }
-                StopDisplay.setText(fields.toString());
+                Arrays.sort(dis); // 升序排列
+                // 查找原始下标
+                for (int i = 0; i < dis.length; i++) {
+                    index[i] = (int) map.get(dis[i]);
+                }
+
+                for (int i = 0; i<index.length; i++){
+
+                    mName.add(StopDetailsList.STOPS[index[i]].getName());
+                    mDescription.add(StopDetailsList.STOPS[index[i]].getDescription());
+                    if (Math.round(dis[i])<=10){
+                        mDistance.add("<=10m");
+                    }
+                    else{
+                        mDistance.add(Math.round(dis[i])+"m");
+                    }
+                }
+                initRecyclerView();
             }
 
             @Override
@@ -153,6 +168,16 @@ public class ListActivity extends AppCompatActivity {
         locationManager.requestLocationUpdates("gps", 5000, 0, locationListener);
     }
 
+    private void initRecyclerView(){
+        RecyclerView recyclerView = findViewById(R.id.recyclerView2);
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(mName,mDescription,mDistance,this);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+
+
+
 
     public int[] sortLocation(LatLng currentLocation){
         double[] dis = new double[StopDetailsList.STOPS.length];
@@ -163,7 +188,6 @@ public class ListActivity extends AppCompatActivity {
             map.put(dis[i], i);
         }
         Arrays.sort(dis); // 升序排列
-
         // 查找原始下标
         for (int i = 0; i < dis.length; i++) {
             index[i] = (int) map.get(dis[i]);

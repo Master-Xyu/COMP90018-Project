@@ -175,7 +175,7 @@ public class MapActivity extends AppCompatActivity implements
                 return;
             }
         }
-        locationManager.requestLocationUpdates("gps", 5000, 0, locationListener);
+        locationManager.requestLocationUpdates("gps", 10000, 0, locationListener);
     }
 
     @Override
