@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
                 Intent intent = new Intent(MainActivity.this, MapActivity.class);
                 startActivity(intent);
-                /*
+
                 List<AuthUI.IdpConfig> providers = Arrays.asList(
                         new AuthUI.IdpConfig.EmailBuilder().build());
 
@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
                                 .build(),
                         RC_SIGN_IN);
 
-                 */
+
             }
         });
     }
