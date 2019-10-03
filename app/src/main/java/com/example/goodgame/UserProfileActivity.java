@@ -1,7 +1,15 @@
 package com.example.goodgame;
 
 import android.app.Dialog;
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.Intent;
+import android.icu.text.SimpleDateFormat;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,32 +19,44 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.goodgame.Photo.SimpleActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
+
+import java.util.Date;
+import java.util.Locale;
 
 public class UserProfileActivity extends AppCompatActivity {
-    FirebaseUser user;
-    ImageView avatar;
-    EditText name;
-    TextView email;
+    FirebaseUser user_;
+    ImageView avatar_;
+    EditText name_;
+    TextView email_;
+    String TAG = "Profile";
+    Uri avatar_uri_;
+    public static final int REQUSET = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_userprofile);
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        email = (TextView) findViewById(R.id.email);
-        name = (EditText) findViewById(R.id.name);
-        avatar = (ImageView) findViewById(R.id.avatar);
+        user_ = FirebaseAuth.getInstance().getCurrentUser();
+        email_ = (TextView) findViewById(R.id.email);
+        name_ = (EditText) findViewById(R.id.name);
+        avatar_ = (ImageView) findViewById(R.id.avatar);
+        avatar_uri_ = createImagePathUri(this);
 
-        if(user != null){
-            email.setText(user.getDisplayName());
-            name.setText(user.getEmail());
-            avatar.setImageURI(user.getPhotoUrl());
+        if(user_ != null){
+            email_.setText(user_.getEmail());
+            name_.setText(user_.getDisplayName());
+            //avatar_.setImageURI(user_.getPhotoUrl());
         }
 
         if (savedInstanceState == null) {
@@ -48,7 +68,9 @@ public class UserProfileActivity extends AppCompatActivity {
 
     }
     public void switchAvatar(View view){
-        System.out.println("aaaaaaaaaaaaaaaaaaaaaaa");
+        Intent intent = new Intent(UserProfileActivity.this, SimpleActivity.class);
+        startActivityForResult(intent, REQUSET);
+        /*
         switch (view.getId()) {
             case R.id.avatar:
                 //弹出对话框
@@ -66,8 +88,9 @@ public class UserProfileActivity extends AppCompatActivity {
                 //取消按钮
                 Toast.makeText(this, "取消", Toast.LENGTH_SHORT).show();
                 break;
-
         }
+
+         */
     }
 
     private void setDialog() {
@@ -96,9 +119,28 @@ public class UserProfileActivity extends AppCompatActivity {
         mCameraDialog.show();
     }
 
+    public void updateOnClick(View v){
+
+        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                .setDisplayName(name_.getText().toString())
+                .setPhotoUri(avatar_uri_)
+                .build();
+
+        user_.updateProfile(profileUpdates)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "User profile updated.");
+                        }
+                    }
+                });
+    }
+
     public class switchListener implements View.OnClickListener{
         @Override
         public void onClick(View view) {
+            /*
             switch (view.getId()) {
                 case R.id.btn_choose_img:
                     //选择照片按钮
@@ -113,6 +155,32 @@ public class UserProfileActivity extends AppCompatActivity {
                     Toast.makeText(UserProfileActivity.this, "取消", Toast.LENGTH_SHORT).show();
                     break;
             }
+
+             */
         }
     }
+
+    private static Uri createImagePathUri(Context context) {
+        Uri imageFilePath = null;
+        String status = Environment.getExternalStorageState();
+        SimpleDateFormat timeFormatter = new SimpleDateFormat(
+                "yyyyMMdd_HHmmss", Locale.ENGLISH);
+        long time = System.currentTimeMillis();
+        String imageName = timeFormatter.format(new Date(time));
+        // ContentValues是我们希望这条记录被创建时包含的数据信息
+        ContentValues values = new ContentValues(3);
+        values.put(MediaStore.Images.Media.DISPLAY_NAME, imageName);
+        values.put(MediaStore.Images.Media.DATE_TAKEN, time);
+        values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpg");
+        if (status.equals(Environment.MEDIA_MOUNTED)) {// 判断是否有SD卡,优先使用SD卡存储,当没有SD卡时使用手机存储
+            imageFilePath = context.getContentResolver().insert(
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+        } else {
+            imageFilePath = context.getContentResolver().insert(
+                    MediaStore.Images.Media.INTERNAL_CONTENT_URI, values);
+        }
+        Log.i("", "生成的照片输出路径：" + imageFilePath.toString());
+        return imageFilePath;
+    }
+
 }

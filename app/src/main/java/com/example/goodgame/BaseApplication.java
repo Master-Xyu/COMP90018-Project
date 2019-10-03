@@ -42,7 +42,7 @@ public class BaseApplication extends Application {
                 .setFilter(true, MapActivity.class, ListActivity.class)
                 .setViewStateListener(mViewStateListener)
                 .setPermissionListener(mPermissionListener)
-                .setDesktopShow(true)
+                .setDesktopShow(false)
                 .build();
 
 

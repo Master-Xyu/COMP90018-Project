@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.goodgame">
+    package="com.example.goodgame"
+    xmlns:tools="http://schemas.android.com/tools">
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -12,7 +13,8 @@
         android:label="Tram Map"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:name="com.example.goodgame.BaseApplication">
+        android:name="com.example.goodgame.BaseApplication"
+        tools:replace="android:label">
 
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -34,13 +36,11 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyBdNklPD089oeu4BlEuax1S1wY1LVddHRo" />
+        <activity android:name=".Photo.ResultActivity"/>
+        <activity android:name=".Photo.SimpleActivity"/>
     </application> <!-- EXTERNAL_STORAGE permissions are optional for Android 6.0 onwards. -->
-    <uses-permission
-        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="22" />
-    <uses-permission
-        android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="22" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
