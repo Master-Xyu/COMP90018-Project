@@ -77,4 +77,9 @@
         <item name="android:gravity">center</item>
         <item name="android:textSize">36sp</item>
     </style>
+
+    <style name="SignoutButton" parent="@android:style/Widget.Holo.Button">
+        <item name="android:background">@drawable/abc_btn_colored_material</item>
+    </style>
+
 </resources>

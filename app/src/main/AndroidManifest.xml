@@ -17,7 +17,7 @@
         android:label="Tram Map"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:name="com.example.goodgame.BaseApplication">
+        tools:replace="android:label">
 
         <activity android:name=".EmailPasswordActivity">
             <intent-filter>
@@ -45,6 +45,10 @@
 
         <activity android:name=".Photo.ResultActivity" />
         <activity android:name=".Photo.SimpleActivity" />
+        <activity
+            android:name=".ProfileCommentActivity"
+            android:label="@string/title_activity_profile_comment">
+        </activity>
     </application>
 
 </manifest>

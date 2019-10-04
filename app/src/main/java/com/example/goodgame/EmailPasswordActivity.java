@@ -16,7 +16,10 @@
 
 package com.example.goodgame;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -53,6 +56,8 @@ public class EmailPasswordActivity extends BaseActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_emailpassword);
 
+        //Permissions
+        getPermission();
         // Views
         mStatusTextView = findViewById(R.id.status);
         mDetailTextView = findViewById(R.id.detail);
@@ -253,6 +258,21 @@ public class EmailPasswordActivity extends BaseActivity implements
             signOut();
         } else if (i == R.id.verifyEmailButton) {
             sendEmailVerification();
+        }
+    }
+
+    private void getPermission(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION,
+                        Manifest.permission.INTERNET,
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                }, 10);
+                return;
+            }
         }
     }
 }
