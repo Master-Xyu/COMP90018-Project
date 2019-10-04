@@ -18,7 +18,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.example.goodgame.Photo.SimpleActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -46,24 +45,24 @@ public class UserProfileActivity extends AppCompatActivity {
         name_ = (EditText) findViewById(R.id.name);
         avatar_ = (ImageView) findViewById(R.id.avatar);
         avatar_uri_ = null;
-
+        setTitle("Profile");
         if(user_ != null){
             email_.setText(user_.getEmail());
             name_.setText(user_.getDisplayName());
-            //avatar_.setImageURI(user_.getPhotoUrl());
-        }
-
-        if (savedInstanceState == null) {
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            RecyclerViewFragment fragment = new RecyclerViewFragment();
-            transaction.replace(R.id.Comment_Frame, fragment);
-            transaction.commit();
+            Uri u = user_.getPhotoUrl();
+            if(u != null)
+                avatar_.setImageURI(u);
         }
 
     }
     public void switchAvatar(View view){
         Intent intent = new Intent(UserProfileActivity.this, SimpleActivity.class);
         setDialog();
+    }
+
+    public void showComments(View view){
+        Intent intent = new Intent(UserProfileActivity.this,ProfileCommentActivity.class);
+        startActivity(intent);
     }
 
     private void setDialog() {

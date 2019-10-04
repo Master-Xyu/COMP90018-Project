@@ -228,5 +228,6 @@
         <item>@string/terrain</item>
         <item>@string/none_map</item>
     </string-array>
+    <string name="title_activity_profile_comment">ProfileCommentActivity</string>
 
 </resources>

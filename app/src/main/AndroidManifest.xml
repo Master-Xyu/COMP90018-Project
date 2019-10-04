@@ -1,21 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.goodgame"
-    xmlns:tools="http://schemas.android.com/tools">
-    <!--
-         The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
-         Google Maps Android API v2, but you must specify either coarse or fine
-         location permissions for the 'MyLocation' functionality.
-    -->
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.goodgame">
+    <!-- EXTERNAL_STORAGE permissions are optional for Android 6.0 onwards. -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
+        android:name=".BaseApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="Tram Map"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:name="com.example.goodgame.BaseApplication"
         tools:replace="android:label">
-
+        <activity
+            android:name=".ProfileCommentActivity"
+            android:label="@string/title_activity_profile_comment">
+            </activity>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,28 +29,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity android:name=".DetailActivity" />
-        <activity android:name=".ListActivity"/>
-        <activity android:name=".UserProfileActivity"/>
+        <activity android:name=".ListActivity" />
+        <activity android:name=".UserProfileActivity" />
         <activity android:name=".MapActivity" />
         <activity
-            android:name="com.example.goodgame.Float.FloatActivity"
+            android:name=".Float.FloatActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="standard"
-            android:windowSoftInputMode="stateHidden|stateAlwaysHidden"/>
+            android:windowSoftInputMode="stateHidden|stateAlwaysHidden" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyBdNklPD089oeu4BlEuax1S1wY1LVddHRo" />
-        <activity android:name=".Photo.ResultActivity"/>
-        <activity android:name=".Photo.SimpleActivity"/>
-    </application> <!-- EXTERNAL_STORAGE permissions are optional for Android 6.0 onwards. -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-    <uses-permission android:name="android.permission.INTERNET" />
+        <activity android:name=".Photo.ResultActivity" />
+        <activity android:name=".Photo.SimpleActivity" />
+    </application>
 
 </manifest>
