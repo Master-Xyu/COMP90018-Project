@@ -78,6 +78,7 @@ public class EmailPasswordActivity extends BaseActivity implements
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
         updateUI(currentUser);
+
     }
     // [END on_start_check_user]
 
@@ -134,9 +135,6 @@ public class EmailPasswordActivity extends BaseActivity implements
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             updateUI(user);
-                            Intent intent = new Intent();
-                            intent.setClass(EmailPasswordActivity.this, MapActivity.class);
-                            startActivity(intent);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
@@ -217,13 +215,21 @@ public class EmailPasswordActivity extends BaseActivity implements
     private void updateUI(FirebaseUser user) {
         hideProgressDialog();
         if (user != null) {
-            mStatusTextView.setText(getString(R.string.emailpassword_status_fmt,
-                    user.getEmail(), user.isEmailVerified()));
-            mDetailTextView.setText(getString(R.string.firebase_status_fmt, user.getUid()));
 
-            findViewById(R.id.emailPasswordButtons).setVisibility(View.GONE);
-            findViewById(R.id.emailPasswordFields).setVisibility(View.GONE);
-            findViewById(R.id.signedInButtons).setVisibility(View.VISIBLE);
+            if(user.isEmailVerified()){
+                Intent intent = new Intent();
+                intent.setClass(EmailPasswordActivity.this, MapActivity.class);
+                startActivity(intent);
+            }
+            else{
+                mStatusTextView.setText(getString(R.string.emailpassword_status_fmt,
+                        user.getEmail(), user.isEmailVerified()));
+                mDetailTextView.setText(getString(R.string.firebase_status_fmt, user.getUid()));
+
+                findViewById(R.id.emailPasswordButtons).setVisibility(View.GONE);
+                findViewById(R.id.emailPasswordFields).setVisibility(View.GONE);
+                findViewById(R.id.signedInButtons).setVisibility(View.VISIBLE);
+            }
 
             findViewById(R.id.verifyEmailButton).setEnabled(!user.isEmailVerified());
         } else {
