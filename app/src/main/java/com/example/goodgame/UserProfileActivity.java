@@ -1,14 +1,9 @@
 package com.example.goodgame;
 
 import android.app.Dialog;
-import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
-import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -19,6 +14,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,9 +27,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 
-import java.util.Date;
-import java.util.Locale;
-
 public class UserProfileActivity extends AppCompatActivity {
     FirebaseUser user_;
     ImageView avatar_;
@@ -42,6 +35,7 @@ public class UserProfileActivity extends AppCompatActivity {
     String TAG = "Profile";
     Uri avatar_uri_;
     public static final int REQUSET = 1;
+    Dialog mCameraDialog_;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +45,7 @@ public class UserProfileActivity extends AppCompatActivity {
         email_ = (TextView) findViewById(R.id.email);
         name_ = (EditText) findViewById(R.id.name);
         avatar_ = (ImageView) findViewById(R.id.avatar);
-        avatar_uri_ = createImagePathUri(this);
+        avatar_uri_ = null;
 
         if(user_ != null){
             email_.setText(user_.getEmail());
@@ -69,32 +63,11 @@ public class UserProfileActivity extends AppCompatActivity {
     }
     public void switchAvatar(View view){
         Intent intent = new Intent(UserProfileActivity.this, SimpleActivity.class);
-        startActivityForResult(intent, REQUSET);
-        /*
-        switch (view.getId()) {
-            case R.id.avatar:
-                //弹出对话框
-                setDialog();
-                break;
-            case R.id.btn_choose_img:
-                //选择照片按钮
-                Toast.makeText(this, "请选择照片", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.btn_open_camera:
-                //拍照按钮
-                Toast.makeText(this, "即将打开相机", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.btn_cancel:
-                //取消按钮
-                Toast.makeText(this, "取消", Toast.LENGTH_SHORT).show();
-                break;
-        }
-
-         */
+        setDialog();
     }
 
     private void setDialog() {
-        Dialog mCameraDialog = new Dialog(this, R.style.BottomDialog);
+        mCameraDialog_ = new Dialog(this, R.style.BottomDialog);
         LinearLayout root = (LinearLayout) LayoutInflater.from(this).inflate(
                 R.layout.pop_dialog, null);
 
@@ -103,8 +76,8 @@ public class UserProfileActivity extends AppCompatActivity {
         root.findViewById(R.id.btn_open_camera).setOnClickListener(sl);
         root.findViewById(R.id.btn_cancel).setOnClickListener(sl);
 
-        mCameraDialog.setContentView(root);
-        Window dialogWindow = mCameraDialog.getWindow();
+        mCameraDialog_.setContentView(root);
+        Window dialogWindow = mCameraDialog_.getWindow();
         dialogWindow.setGravity(Gravity.BOTTOM);
  //       dialogWindow.setWindowAnimations(R.style.dialogstyle); // 添加动画
         WindowManager.LayoutParams lp = dialogWindow.getAttributes(); // 获取对话框当前的参数值
@@ -116,15 +89,17 @@ public class UserProfileActivity extends AppCompatActivity {
 
         lp.alpha = 9f; // 透明度
         dialogWindow.setAttributes(lp);
-        mCameraDialog.show();
+        mCameraDialog_.show();
     }
 
     public void updateOnClick(View v){
 
-        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                .setDisplayName(name_.getText().toString())
-                .setPhotoUri(avatar_uri_)
-                .build();
+        UserProfileChangeRequest.Builder profileUpdatesBuilder = new UserProfileChangeRequest.Builder();
+        profileUpdatesBuilder.setDisplayName(name_.getText().toString());
+        if(avatar_uri_ != null){
+            profileUpdatesBuilder.setPhotoUri(avatar_uri_);
+        }
+        UserProfileChangeRequest profileUpdates = profileUpdatesBuilder.build();
 
         user_.updateProfile(profileUpdates)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -140,47 +115,37 @@ public class UserProfileActivity extends AppCompatActivity {
     public class switchListener implements View.OnClickListener{
         @Override
         public void onClick(View view) {
-            /*
+            Intent intent = new Intent(UserProfileActivity.this, SimpleActivity.class);
             switch (view.getId()) {
                 case R.id.btn_choose_img:
                     //选择照片按钮
                     Toast.makeText(UserProfileActivity.this, "请选择照片", Toast.LENGTH_SHORT).show();
+                    intent.putExtra("mode", 0);
+                    startActivityForResult(intent, REQUSET);
                     break;
                 case R.id.btn_open_camera:
                     //拍照按钮
                     Toast.makeText(UserProfileActivity.this, "即将打开相机", Toast.LENGTH_SHORT).show();
+                    intent.putExtra("mode", 1);
+                    startActivityForResult(intent, REQUSET);
                     break;
                 case R.id.btn_cancel:
                     //取消按钮
                     Toast.makeText(UserProfileActivity.this, "取消", Toast.LENGTH_SHORT).show();
                     break;
             }
-
-             */
+            mCameraDialog_.dismiss();
         }
     }
 
-    private static Uri createImagePathUri(Context context) {
-        Uri imageFilePath = null;
-        String status = Environment.getExternalStorageState();
-        SimpleDateFormat timeFormatter = new SimpleDateFormat(
-                "yyyyMMdd_HHmmss", Locale.ENGLISH);
-        long time = System.currentTimeMillis();
-        String imageName = timeFormatter.format(new Date(time));
-        // ContentValues是我们希望这条记录被创建时包含的数据信息
-        ContentValues values = new ContentValues(3);
-        values.put(MediaStore.Images.Media.DISPLAY_NAME, imageName);
-        values.put(MediaStore.Images.Media.DATE_TAKEN, time);
-        values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpg");
-        if (status.equals(Environment.MEDIA_MOUNTED)) {// 判断是否有SD卡,优先使用SD卡存储,当没有SD卡时使用手机存储
-            imageFilePath = context.getContentResolver().insert(
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-        } else {
-            imageFilePath = context.getContentResolver().insert(
-                    MediaStore.Images.Media.INTERNAL_CONTENT_URI, values);
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        String URI = data.getExtras().getString("URI");
+        Log.i(TAG, URI);
+        if(URI == "Failed" || URI == "Canceled"){
+            return;
         }
-        Log.i("", "生成的照片输出路径：" + imageFilePath.toString());
-        return imageFilePath;
+        avatar_uri_ = Uri.parse(URI);
+        avatar_.setImageURI(avatar_uri_);
     }
 
 }
