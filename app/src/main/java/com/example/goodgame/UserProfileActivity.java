@@ -1,5 +1,6 @@
 package com.example.goodgame;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.net.Uri;
@@ -10,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -53,6 +55,17 @@ public class UserProfileActivity extends AppCompatActivity {
             if(u != null)
                 avatar_.setImageURI(u);
         }
+
+        Button bt = (Button) findViewById(R.id.signout);
+        bt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                FirebaseAuth.getInstance().signOut();
+                Intent intent = new Intent(UserProfileActivity.this, EmailPasswordActivity.class);
+                startActivity(intent);
+            }
+        });
 
     }
     public void switchAvatar(View view){
@@ -132,6 +145,8 @@ public class UserProfileActivity extends AppCompatActivity {
                     //取消按钮
                     Toast.makeText(UserProfileActivity.this, "取消", Toast.LENGTH_SHORT).show();
                     break;
+
+
             }
             mCameraDialog_.dismiss();
         }
