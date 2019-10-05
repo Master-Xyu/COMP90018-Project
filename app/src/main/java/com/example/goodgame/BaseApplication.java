@@ -2,6 +2,7 @@ package com.example.goodgame;
 
 import android.app.Application;
 import android.content.Intent;
+import android.net.Uri;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.BounceInterpolator;
@@ -22,17 +23,17 @@ public class BaseApplication extends Application {
 
 
     private static final String TAG = "FloatWindow";
-
+    public static ImageView imageView_;
     @Override
     public void onCreate() {
         super.onCreate();
 
-        ImageView imageView = new ImageView(getApplicationContext());
-        imageView.setImageResource(R.drawable.default_avatar);
+        imageView_ = new ImageView(getApplicationContext());
+        imageView_.setImageResource(R.drawable.default_avatar);
 
         FloatWindow
                 .with(getApplicationContext())
-                .setView(imageView)
+                .setView(imageView_)
                 .setWidth(Screen.width, 0.15f) //设置悬浮控件宽高
                 .setHeight(Screen.width, 0.15f)
                 .setX(Screen.width, 0.8f)
@@ -46,7 +47,7 @@ public class BaseApplication extends Application {
                 .build();
 
 
-        imageView.setOnClickListener(new View.OnClickListener() {
+        imageView_.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -105,4 +106,8 @@ public class BaseApplication extends Application {
             Log.d(TAG, "onBackToDesktop");
         }
     };
+
+    public static void changeImage(Uri uri){
+        imageView_.setImageURI(uri);
+    }
 }

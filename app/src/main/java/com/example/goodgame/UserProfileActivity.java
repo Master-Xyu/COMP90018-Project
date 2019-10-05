@@ -1,6 +1,5 @@
 package com.example.goodgame;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.net.Uri;
@@ -63,6 +62,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
                 FirebaseAuth.getInstance().signOut();
                 Intent intent = new Intent(UserProfileActivity.this, EmailPasswordActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }
         });
