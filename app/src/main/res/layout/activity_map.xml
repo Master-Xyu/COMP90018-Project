@@ -34,14 +34,31 @@
             android:layout_gravity="top|left"
             android:text="Map" />
 
-        <Button
-            android:id="@+id/btnList"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right|top"
-            android:text="List" />
+<!--        <Button-->
+<!--            android:id="@+id/btnList"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_gravity="right|top"-->
+<!--            android:text="List" />-->
 
+        <Button
+            android:id="@+id/action_add_post"
+            android:layout_width="205dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="right|top"
+            android:onClick="openPostActivity"
+            android:text="Add Post"
+            android:title="Add Post" />
     </LinearLayout>
+
+<!--    <Button-->
+<!--        android:id="@+id/action_add_post"-->
+<!--        android:layout_width="205dp"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:layout_gravity="right|top"-->
+<!--        android:onClick="openPostActivity"-->
+<!--        android:text="Add Post"-->
+<!--        android:title="Add Post" />-->
 
     <FrameLayout
         android:layout_width="match_parent"

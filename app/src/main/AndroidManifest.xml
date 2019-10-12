@@ -37,11 +37,13 @@
             android:label="@string/title_activity_profile_comment" />
         <meta-data
             android:name="com.google.android.actions"
-            android:resource="@xml/editextstyle" />
+            android:resource="@drawable/editextstyle" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyBdNklPD089oeu4BlEuax1S1wY1LVddHRo" />
+        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
+
     </application>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />

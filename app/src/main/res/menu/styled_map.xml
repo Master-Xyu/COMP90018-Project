@@ -19,4 +19,11 @@
         android:id="@+id/menu_style_choose"
         android:title="@string/style_choose"
         app:showAsAction="always"/>
+
+    <item
+            android:id="@+id/action_add_post"
+                android:layout_width="match_parent"
+                android:icon="@drawable/ic_add_white"
+                android:title="Add Post"
+                app:showAsAction="always" />
 </menu>

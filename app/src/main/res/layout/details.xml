@@ -15,29 +15,51 @@
  limitations under the License.
 -->
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="72dp"
-    android:layout_marginLeft="16dp"
-    android:layout_marginRight="16dp"
-    android:gravity="center_vertical">
+<!--<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    xmlns:app="http://schemas.android.com/apk/res-auto"-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="72dp"-->
+<!--    android:layout_marginLeft="16dp"-->
+<!--    android:layout_marginRight="16dp"-->
+<!--    android:gravity="center_vertical">-->
 
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:visibility="visible">
+<!--        <TextView-->
+<!--            android:id="@+id/textView"-->
+<!--            android:layout_width="307dp"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_weight="1"-->
+<!--            android:text="TextView" />-->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="93dp"
         android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="307dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="TextView" />
 
+        <Button
+            android:id="@+id/action_add_post"
+            android:layout_width="205dp"
+            android:layout_height="match_parent"
+            android:onClick="postOnClick"
+            android:layout_gravity="top|left"
+            android:text="Add Post"
+            android:title="Add Post" />
+
+
+        <!--        <item-->
+        <!--&lt;!&ndash;            android:id="@+id/action_add_post"&ndash;&gt;-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:icon="@drawable/ic_add_white"-->
+        <!--            android:title="Add Post"-->
+        <!--            app:showAsAction="always" />-->
     </LinearLayout>
-    <item android:id="@id/action_add_post"
-        android:title="Add Post"
-        app:showAsAction="always"
-    android:icon="@drawable/ic_add_white"/>
-</FrameLayout>
+</LinearLayout>
+
+
+<!--</FrameLayout>-->
