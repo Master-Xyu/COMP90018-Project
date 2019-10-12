@@ -26,6 +26,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -36,6 +39,9 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import java.util.HashMap;
 
 //import android.app.Activity;
 
@@ -89,6 +95,8 @@ public class  AddPostActivity extends AppCompatActivity {
 
         firebaseAuth=FirebaseAuth.getInstance();
         checkUserStatus();
+
+        actionBar.setSubtitle(email  );
 
         userDbRef= FirebaseDatabase.getInstance().getReference("Users");
         Query query =userDbRef.orderByChild("email").equalTo(email);
@@ -160,9 +168,111 @@ public class  AddPostActivity extends AppCompatActivity {
             //post with image
 //            StorageReference storageRef = storage.getReference();
             StorageReference ref= FirebaseStorage.getInstance().getReference().child(filePathAndName) ;
-             ref.putFile(Uri.parse(uri)).
+             ref.putFile(Uri.parse(uri))
+                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                         @Override
+                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                             Task<Uri> uriTask=taskSnapshot.getStorage().getDownloadUrl();
+                             while (!uriTask.isSuccessful());
+
+                             String downloadUri= uriTask.getResult().toString();
+
+
+                             if(uriTask.isSuccessful()){
+                                 //url is received upload post to firebase database
+                                 HashMap<Object,String> hashMap= new HashMap<>();
+                                 hashMap.put("uid",uid);
+                                 hashMap.put("uName",name);
+                                 hashMap.put("uEmail",email);
+                                 hashMap.put("uDp",dp);
+                                 hashMap.put("pId",timeStamp);
+                                 hashMap.put("pTitle",title );
+                                 hashMap.put("pDescr",description);
+                                 hashMap.put("pImage",downloadUri);
+                                 hashMap.put("pTime",timeStamp);
+
+                                 //path to storage post data
+                                 DatabaseReference ref =FirebaseDatabase.getInstance().getReference("Posts");
+                                 // put data in this ref
+                                 ref.child(timeStamp).setValue(hashMap)
+                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                             @Override
+                                             public void onSuccess(Void aVoid) {
+                                                 pd.dismiss();
+                                                  Toast.makeText(AddPostActivity.this,"Post published",Toast.LENGTH_SHORT).show();
+                                                 // reset views
+                                                 titleEt.setText("");
+                                                 descriptionEt.setText("");
+                                                 imageIv.setImageURI(null);
+                                                 image_rui=null;
+
+
+                                             }
+                                         })
+                                         .addOnFailureListener(new OnFailureListener() {
+                                             @Override
+                                             public void onFailure(@NonNull Exception e) {
+                                                 //failed adding post in database
+                                                 pd.dismiss();
+                                                 Toast.makeText(AddPostActivity.this,""+e.getMessage(),Toast.LENGTH_SHORT).show();
+
+
+                                             }
+                                         });
+
+                             }
+                         }
+                     }).addOnFailureListener(new OnFailureListener() {
+                 @Override
+                 public void onFailure(@NonNull Exception e) {
+                     //failed upload
+                     pd.dismiss();;
+                     Toast.makeText(AddPostActivity.this,""+e.getMessage(),Toast.LENGTH_SHORT).show();
+
+                 }
+             });
+
 
         }else{
+            HashMap<Object,String> hashMap= new HashMap<>();
+            hashMap.put("uid",uid);
+            hashMap.put("uName",name);
+            hashMap.put("uEmail",email);
+            hashMap.put("uDp",dp);
+            hashMap.put("pId",timeStamp);
+            hashMap.put("pTitle",title );
+            hashMap.put("pDescr",description);
+            hashMap.put("pImage","noImage");
+            hashMap.put("pTime",timeStamp);
+
+            //path to storage post data
+            DatabaseReference ref =FirebaseDatabase.getInstance().getReference("Posts");
+            // put data in this ref
+            ref.child(timeStamp).setValue(hashMap)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            pd.dismiss();
+                            Toast.makeText(AddPostActivity.this,"Post published",Toast.LENGTH_SHORT).show();
+                            // reset views
+                            titleEt.setText("");
+                            descriptionEt.setText("");
+                            imageIv.setImageURI(null);
+                            image_rui=null;
+
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            //failed adding post in database
+                            pd.dismiss();
+                            Toast.makeText(AddPostActivity.this,""+e.getMessage(),Toast.LENGTH_SHORT).show();
+
+
+                        }
+                    });
 
         }
 
@@ -207,7 +317,7 @@ public class  AddPostActivity extends AppCompatActivity {
     private void pickFromGallery() {
         Intent intent=new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
-        startActivityForResult(intent,);
+        startActivityForResult(intent,IMAGE_PICK_GALLERY_CODE);
 
 
 
@@ -282,7 +392,9 @@ public class  AddPostActivity extends AppCompatActivity {
 
 
     public boolean onCreateOptionsMenu(Menu menu){
-        getMenuInflater().inflate(R.menu.menu_main,menu);
+//        getMenuInflater().inflate(R.menu.main,menu);
+//        menu.findItem(R.id.action_add_post).setVisible(false);
+
         return super.onCreateOptionsMenu(menu);
     }
 
