@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -13,20 +15,22 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 
-public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
+public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> implements Filterable{
 
-    private ArrayList<String> mName = new ArrayList<>();
-    private ArrayList<String> mDescription = new ArrayList<>();
-    private ArrayList<String> mDistance = new ArrayList<>();
+    private List<StopDetails> mStop;
+    private List<StopDetails> stopFull;
     private Context mContext;
 
-    public RecyclerViewAdapter(ArrayList<String> mName, ArrayList<String> mDescription, ArrayList<String> mDistance, Context mContext) {
-        this.mName = mName;
-        this.mDescription = mDescription;
-        this.mDistance = mDistance;
+
+    public RecyclerViewAdapter(ArrayList<StopDetails>mStop,  Context mContext) {
+        this.mStop = mStop;
         this.mContext = mContext;
+        stopFull = new ArrayList<>(mStop);
+
     }
 
     @NonNull
@@ -39,14 +43,15 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.name.setText(mName.get(position));
-        holder.description.setText(mDescription.get(position));
-        holder.distance.setText(mDistance.get(position));
+        holder.name.setText(mStop.get(position).getName());
+        holder.description.setText(mStop.get(position).getDescription());
+        holder.distance.setText(mStop.get(position).getDistance());
 
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(mContext, DetailActivity.class);
+                intent.putExtra("stopID",mStop.get(position).getId());
                 mContext.startActivity(intent);
             }
         });
@@ -56,8 +61,43 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public int getItemCount() {
-        return mName.size();
+        return mStop.size();
     }
+
+    @Override
+    public Filter getFilter() {
+        return filter;
+    }
+
+    Filter filter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence charSequence) {
+            List<StopDetails> filteredStop = new ArrayList<>();
+
+            if (charSequence.toString().isEmpty()){
+                filteredStop.addAll(stopFull);
+
+            }else{
+                String filterPattern = charSequence.toString().toLowerCase().trim();
+                for (StopDetails stop: stopFull){
+                    if (stop.getName().toLowerCase().contains(filterPattern) || stop.getDescription().toLowerCase().contains(filterPattern)){
+                        filteredStop.add(stop);
+                    }
+                }
+            }
+
+            FilterResults filterResults = new FilterResults();
+            filterResults.values = filteredStop;
+            return filterResults;
+        }
+
+        @Override
+        protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+            mStop.clear();
+            mStop.addAll((Collection<? extends StopDetails>) filterResults.values);
+            notifyDataSetChanged();
+        }
+    };
 
     public class ViewHolder extends RecyclerView.ViewHolder{
         TextView name;
