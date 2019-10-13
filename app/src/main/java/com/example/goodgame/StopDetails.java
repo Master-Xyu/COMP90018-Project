@@ -1,13 +1,8 @@
 package com.example.goodgame;
 
 
-import android.content.Intent;
-import android.view.MenuItem;
-
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.GeoPoint;
 
 
 public class StopDetails {
@@ -44,6 +39,7 @@ public class StopDetails {
     public LatLng getPosition() {
         return position;
     }
+}
 
     /*handle menu item clicks*/
 //    public  boolean onOptionsItemSelected(MenuItem item){
