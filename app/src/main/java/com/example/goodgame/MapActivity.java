@@ -58,7 +58,7 @@ public class MapActivity extends AppCompatActivity implements
 
     private static LatLng myLocation;
 
-    private int[]score={20,30,40,50,60,70,80,90};
+    private int[]score={20,30,40,50,60,70,80,90,20,30,40,50,60,70,80,90,70,80,90};
 
     private Marker mSelectedMarker;
 
