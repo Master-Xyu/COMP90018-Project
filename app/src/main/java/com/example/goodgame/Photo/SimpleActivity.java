@@ -13,6 +13,8 @@ import android.widget.Toast;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.jph.takephoto.app.TakePhoto;
 import com.jph.takephoto.app.TakePhotoActivity;
 import com.jph.takephoto.model.CropOptions;
@@ -50,6 +52,8 @@ public class SimpleActivity extends TakePhotoActivity {
     private TakePhotoOptions.Builder takeBuilder_;
     private TakePhoto takePhoto_;
     private Uri imageUri_;
+    FirebaseAuth firebaseAuth;
+    FirebaseUser user;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         checkPermission();
@@ -140,7 +144,7 @@ public class SimpleActivity extends TakePhotoActivity {
 
         } else {
             Toast.makeText(this, "授权成功！", Toast.LENGTH_SHORT).show();
-            Log.e("SimpleActivity", "checkPermission: 已经授权！");
+            Log.e ("SimpleActivity", "checkPermission: 已经授权！");
         }
     }
 
