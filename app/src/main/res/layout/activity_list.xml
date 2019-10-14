@@ -17,10 +17,12 @@
             android:layout_width="205dp"
             android:layout_height="wrap_content"
             android:layout_gravity="top|left"
+            style="@android:style/Widget.Holo.Button"
             android:text="Map" />
 
         <Button
             android:id="@+id/btnList"
+            style="@android:style/Widget.Holo.Button"
             android:layout_width="205dp"
             android:layout_height="wrap_content"
             android:layout_gravity="top|right"
@@ -28,7 +30,20 @@
 
 
     </LinearLayout>
-
+    <SearchView
+        android:id="@+id/search_location"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:queryHint="Search..."
+        android:iconifiedByDefault="false"
+        android:elevation="10dp"
+        android:background="@drawable/bg_round"
+        android:textColor="#000"
+        android:textSize="15sp"
+        ></SearchView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView2"

@@ -3,6 +3,8 @@ package com.example.goodgame;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -10,19 +12,28 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.Interpolator;
+import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentActivity;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
@@ -39,6 +50,11 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * This shows how to place markers on a map.
@@ -60,9 +76,16 @@ public class MapActivity extends AppCompatActivity implements
 
     private int[]score={20,30,40,50,60,70,80,90,20,30,40,50,60,70,80,90,70,80,90};
 
+    private List<Marker> mMarker;
+
     private Marker mSelectedMarker;
 
     private GoogleMap mMap;
+
+    private SearchView searchView;
+
+    private AutoCompleteTextView mSearchText;
+
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -94,10 +117,7 @@ public class MapActivity extends AppCompatActivity implements
                                 StopDetails s = document.toObject(StopDetails.class);
                                 stopList.add(s);
                             }
-                            System.out.println("&&&&&&&&&&&&&&&&&");
-                            System.out.println(stopList.size());
-                            System.out.println(stopList.get(0).getFreeZone());
-                            System.out.println("&&&&&&&&&&&&&&&&&");
+
                         }
                     }
                 });
@@ -134,6 +154,46 @@ public class MapActivity extends AppCompatActivity implements
                 startActivity(intent3);
             }
         });
+
+
+        String[] name = new String[StopDetailsList.STOPS.length];
+        for (int i=0; i<name.length;i++){
+            name[i] = StopDetailsList.STOPS[i].getName();
+        }
+        mSearchText = findViewById(R.id.search_input1);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,name);
+        mSearchText.setAdapter(adapter);
+        AdapterView.OnItemClickListener mAutocompleteClickListener = new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String location = mSearchText.getText().toString();
+
+                for(int j=0; j<mMarker.size();j++){
+                    if(mMarker.get(j).getTitle().equals(location)){
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mMarker.get(j).getPosition(),15));
+                        markerBounce(mMarker.get(j));
+                    }
+                }
+            }
+        };
+        /*
+        mSearchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
+                if(actionId == EditorInfo.IME_ACTION_SEARCH
+                        ||actionId == EditorInfo.IME_ACTION_DONE
+                        ||keyEvent.getAction() == KeyEvent.ACTION_DOWN
+                        ||keyEvent.getAction() == KeyEvent.KEYCODE_ENTER){
+                    String location = mSearchText.getText().toString();
+
+
+                }
+                return false;
+            }
+        });
+
+         */
+
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         locationListener = new LocationListener() {
@@ -202,39 +262,17 @@ public class MapActivity extends AppCompatActivity implements
 
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_search,menu);
-        MenuItem item = menu.findItem(R.id.menuSearch);
-
-        SearchView searchView = (SearchView)item.getActionView();
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String s) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String s) {
-                return false;
-            }
-        });
-        return super.onCreateOptionsMenu(menu);
-    }
-
     private void addMarkersToMap() {
-        //if (name.size()==0 )
-        //    return;
+        mMarker = new ArrayList<>();
         for (int i=0; i<StopDetailsList.STOPS.length;i++){
             Marker m = mMap.addMarker(new MarkerOptions()
                     .position(StopDetailsList.STOPS[i].getPosition())
                     .title(StopDetailsList.STOPS[i].getName())
                     .snippet(StopDetailsList.STOPS[i].getDescription())
-                    //.title(stopList.get(i).getName())
-                    //.snippet(stopList.get(i).getDescription())
                     .icon(getIcon(score[i])));
+                    //.icon(BitmapDescriptorFactory.fromResource(R.drawable.arrow)) //using custom icon
                     //.infoWindowAnchor(0.5f, 0.5f));
+            mMarker.add(m);
         }
     }
 
@@ -242,8 +280,6 @@ public class MapActivity extends AppCompatActivity implements
     public BitmapDescriptor getIcon(int score){
         if (score<=30){
             //safe
-
-            //.icon(BitmapDescriptorFactory.fromResource(R.drawable.arrow)) //using custom icon
             return BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
         }
         else if(score>30 && score<80){
@@ -268,7 +304,20 @@ public class MapActivity extends AppCompatActivity implements
     //
     @Override
     public boolean onMarkerClick(final Marker marker) {
+        markerBounce(marker);
+        if (marker.equals(mSelectedMarker)) {
+            mSelectedMarker = null;
+            return true;
+        }
 
+        mSelectedMarker = marker;
+
+        // Return false to indicate that we have not consumed the event and that we wish
+        // for the default behavior to occur.
+        return false;
+
+    }
+    public void markerBounce(Marker marker){
         //set the bounced marker
         final Handler handler = new Handler();
         final long start = SystemClock.uptimeMillis();
@@ -290,17 +339,6 @@ public class MapActivity extends AppCompatActivity implements
                 }
             }
         });
-        if (marker.equals(mSelectedMarker)) {
-            mSelectedMarker = null;
-            return true;
-        }
-
-        mSelectedMarker = marker;
-
-        // Return false to indicate that we have not consumed the event and that we wish
-        // for the default behavior to occur.
-        return false;
-
     }
 
 

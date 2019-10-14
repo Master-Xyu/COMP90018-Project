@@ -39,7 +39,8 @@ public class ListActivity extends AppCompatActivity {
     private LocationManager locationManager;
     private static LatLng myLocation;
     private ArrayList<StopDetails> mStop = new ArrayList<>();
-    RecyclerViewAdapter adapter;
+    private RecyclerViewAdapter adapter;
+    private SearchView searchView;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -90,9 +91,22 @@ public class ListActivity extends AppCompatActivity {
             }
         });
 
+        searchView = findViewById(R.id.search_location);
+        searchView.setFocusable(false);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
 
+            @Override
+            public boolean onQueryTextChange(String s) {
+                adapter.getFilter().filter(s);
+                return false;
+            }
+        });
 
-        //using gps
+            //using gps
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         locationListener = new LocationListener() {
             //Whenever the location is updated, the last method checks if the gps is turned off.
@@ -162,7 +176,7 @@ public class ListActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
-
+/*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -184,6 +198,8 @@ public class ListActivity extends AppCompatActivity {
         });
         return super.onCreateOptionsMenu(menu);
     }
+
+ */
 
 
 }

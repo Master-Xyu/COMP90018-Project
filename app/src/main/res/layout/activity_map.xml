@@ -21,6 +21,7 @@
             android:layout_width="205dp"
             android:layout_height="match_parent"
             android:layout_gravity="top|left"
+            style="@android:style/Widget.Holo.Button"
             android:text="Map" />
 
         <Button
@@ -28,30 +29,68 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="right|top"
+            style="@android:style/Widget.Holo.Button"
             android:text="List" />
 
     </LinearLayout>
 
+
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-
+<!--
+        <SearchView
+            android:id="@+id/search_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:queryHint="Search..."
+            android:iconifiedByDefault="false"
+            android:elevation="5dp"
+            android:background="@drawable/bg_round"
+            ></SearchView>
+            -->
         <fragment
             android:id="@+id/map"
             class="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <!--
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|right"
-            android:clickable="true"
-            tools:srcCompat="@tools:sample/avatars" />
-        -->
+        <RelativeLayout
+            android:id="@+id/searchLayout"
+            android:layout_width="338dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/bg_round"
+            android:elevation="10dp">
+            <!--
+            <ImageView
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:id="@+id/ic_magnify"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:srcCompat="@drawable/ic_magnify"/>
+                -->
+            <AutoCompleteTextView
+                android:id="@+id/search_input1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@null"
+                android:hint="  Search..."
+                android:imeOptions="actionSearch"
+                android:textColor="#000"
+                android:textSize="15sp" />
+
+        </RelativeLayout>
+
+
 
     </FrameLayout>
 
