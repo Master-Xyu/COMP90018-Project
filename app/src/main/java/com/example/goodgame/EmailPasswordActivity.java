@@ -35,6 +35,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
 //import com.google.firebase.quickstart.auth.R;
 
 public class EmailPasswordActivity extends BaseActivity implements
@@ -105,6 +109,29 @@ public class EmailPasswordActivity extends BaseActivity implements
                             Log.d(TAG, "createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             updateUI(user);
+
+                            //Get user email and uid from auth add by M
+                            String email =user.getEmail();
+                            String uid=user.getUid();
+                            HashMap<Object,String> hashMap= new HashMap<>();
+                            hashMap.put("email",email);
+                            hashMap.put("uid", uid);
+                            hashMap.put("name","");// the empty part will be added later (e.g. edit profile)
+                            hashMap.put("phone","");
+                            hashMap.put("image","");
+                            //firebase database instance
+                            FirebaseDatabase database =FirebaseDatabase.getInstance();
+                            //path to store user data named "Users"
+                            DatabaseReference reference = database.getReference("Users");
+                            reference.child(uid).setValue(hashMap);
+
+                            //need test
+                            Toast.makeText(EmailPasswordActivity.this,"registered....\n"+user.getEmail(),Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(EmailPasswordActivity.this,UserProfileActivity.class));
+                            finish();
+
+
+
 
                         } else {
                             // If sign in fails, display a message to the user.
