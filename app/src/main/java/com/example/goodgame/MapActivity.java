@@ -94,39 +94,6 @@ public class MapActivity extends AppCompatActivity implements
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        db = FirebaseFirestore.getInstance();
-        /*
-        db.collection("stopInfo").get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        if(!queryDocumentSnapshots.isEmpty()){
-                            List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
-                            for(DocumentSnapshot d : list) {
-                                StopDetails s = d.toObject(StopDetails.class);
-                                stopList.add(s);
-                            }
-                        }
-                    }
-                });
-
-         */
-        /*
-        db.collection("stopInfo").get().
-                addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful() && task.getResult() != null) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                StopDetails s = document.toObject(StopDetails.class);
-                                stopList.add(s);
-                            }
-
-                        }
-                    }
-                });
-
-         */
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
@@ -160,6 +127,7 @@ public class MapActivity extends AppCompatActivity implements
         });
 
 
+
         mSearchText = (AutoCompleteTextView) findViewById(R.id.search_input1);
         String[] name = new String[StopDetailsList.STOPS.length];
         for (int i=0; i<name.length;i++){
@@ -179,7 +147,7 @@ public class MapActivity extends AppCompatActivity implements
                 }
             }
         });
-
+/*
         ImageButton btnReturn = (ImageButton)findViewById(R.id.ic_return);
         btnReturn.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -201,6 +169,8 @@ public class MapActivity extends AppCompatActivity implements
                 mSearchText.setText("");
             }
         });
+
+ */
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         locationListener = new LocationListener() {
@@ -250,7 +220,7 @@ public class MapActivity extends AppCompatActivity implements
         mMap = map;
 
         // Hide the zoom controls as the button will cover it.
-        mMap.getUiSettings().setZoomControlsEnabled(false);
+        mMap.getUiSettings().setZoomControlsEnabled(true);
 
         // Set listeners for marker events.  See the bottom of this class for their behavior.
         mMap.setOnMarkerClickListener(this);
