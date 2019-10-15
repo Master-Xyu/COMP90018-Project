@@ -24,7 +24,7 @@ public class StopDetailsList {
 
     private static final LatLng STOP11 = new LatLng(-37.815932, 144.966946);
 
-    private static final LatLng STOP12 = new LatLng(-37.815932, 144.966946);
+    private static final LatLng STOP12 = new LatLng(-37.801947, 144.957687);
 
     private static final LatLng STOP13 = new LatLng(-37.817486, 144.966914);
 

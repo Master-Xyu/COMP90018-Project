@@ -30,21 +30,37 @@
 
 
     </LinearLayout>
-    <SearchView
-        android:id="@+id/search_location"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
-        android:queryHint="Search..."
-        android:iconifiedByDefault="false"
-        android:elevation="10dp"
-        android:background="@drawable/bg_round"
-        android:textColor="#000"
-        android:textSize="15sp"
-        ></SearchView>
-
+    <RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:layout_marginLeft="10dp"
+    android:layout_marginTop="10dp"
+    android:layout_marginRight="10dp"
+    android:background="@drawable/bg_round"
+    android:elevation="10dp">
+        <SearchView
+            android:id="@+id/search_list"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@null"
+            android:elevation="10dp"
+            android:iconifiedByDefault="false"
+            android:queryHint="Search..."
+            android:textColor="#000"
+            android:textSize="15sp">
+        </SearchView>
+        <!--
+        <ImageButton
+            android:id="@+id/ic_clear2"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="360dp"
+            android:layout_toEndOf="@+id/ic_magnify"
+            android:layout_toRightOf="@+id/ic_magnify"
+            app:srcCompat="@drawable/ic_clear" />
+        -->
+    </RelativeLayout>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView2"
         android:layout_width="match_parent"

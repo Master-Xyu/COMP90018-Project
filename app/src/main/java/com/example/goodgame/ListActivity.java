@@ -13,6 +13,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.SearchView;
 
 import androidx.annotation.RequiresApi;
@@ -91,7 +93,9 @@ public class ListActivity extends AppCompatActivity {
             }
         });
 
-        searchView = findViewById(R.id.search_location);
+
+
+        searchView = findViewById(R.id.search_list);
         searchView.setFocusable(false);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -105,6 +109,16 @@ public class ListActivity extends AppCompatActivity {
                 return false;
             }
         });
+        /*
+        ImageButton btnClear = (ImageButton)findViewById(R.id.ic_clear2);
+        btnClear.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        */
 
             //using gps
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);

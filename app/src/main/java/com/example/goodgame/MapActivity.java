@@ -1,6 +1,7 @@
 package com.example.goodgame;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -20,11 +21,14 @@ import android.view.View;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.Interpolator;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CursorAdapter;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -156,18 +160,17 @@ public class MapActivity extends AppCompatActivity implements
         });
 
 
+        mSearchText = (AutoCompleteTextView) findViewById(R.id.search_input1);
         String[] name = new String[StopDetailsList.STOPS.length];
         for (int i=0; i<name.length;i++){
             name[i] = StopDetailsList.STOPS[i].getName();
         }
-        mSearchText = findViewById(R.id.search_input1);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,name);
         mSearchText.setAdapter(adapter);
-        AdapterView.OnItemClickListener mAutocompleteClickListener = new AdapterView.OnItemClickListener() {
+        mSearchText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 String location = mSearchText.getText().toString();
-
                 for(int j=0; j<mMarker.size();j++){
                     if(mMarker.get(j).getTitle().equals(location)){
                         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mMarker.get(j).getPosition(),15));
@@ -175,25 +178,29 @@ public class MapActivity extends AppCompatActivity implements
                     }
                 }
             }
-        };
-        /*
-        mSearchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        });
+
+        ImageButton btnReturn = (ImageButton)findViewById(R.id.ic_return);
+        btnReturn.setOnClickListener(new View.OnClickListener(){
             @Override
-            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
-                if(actionId == EditorInfo.IME_ACTION_SEARCH
-                        ||actionId == EditorInfo.IME_ACTION_DONE
-                        ||keyEvent.getAction() == KeyEvent.ACTION_DOWN
-                        ||keyEvent.getAction() == KeyEvent.KEYCODE_ENTER){
-                    String location = mSearchText.getText().toString();
-
-
+            public void onClick(View view) {
+                String location = mSearchText.getText().toString();
+                for(int j=0; j<mMarker.size();j++){
+                    if(mMarker.get(j).getTitle().equals(location)){
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mMarker.get(j).getPosition(),15));
+                        markerBounce(mMarker.get(j));
+                    }
                 }
-                return false;
             }
         });
 
-         */
-
+        ImageButton btnClear = (ImageButton)findViewById(R.id.ic_clear);
+        btnClear.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                mSearchText.setText("");
+            }
+        });
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         locationListener = new LocationListener() {
@@ -259,7 +266,46 @@ public class MapActivity extends AppCompatActivity implements
 
         addMarkersToMap();
 
+    }
 
+    private void initSearch(){
+        String[] name = new String[StopDetailsList.STOPS.length];
+        for (int i=0; i<name.length;i++){
+            name[i] = StopDetailsList.STOPS[i].getName();
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,name);
+        mSearchText.setAdapter(adapter);
+        mSearchText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String location = mSearchText.getText().toString();
+                for(int j=0; j<mMarker.size();j++){
+                    if(mMarker.get(j).getTitle().equals(location)){
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mMarker.get(j).getPosition(),15));
+                        markerBounce(mMarker.get(j));
+                    }
+                }
+            }
+        });
+
+        mSearchText.setOnEditorActionListener(new AutoCompleteTextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
+                if(actionId == EditorInfo.IME_ACTION_SEARCH
+                        || actionId == EditorInfo.IME_ACTION_DONE
+                        ||keyEvent.getAction() == KeyEvent.ACTION_DOWN
+                        ||keyEvent.getAction() == KeyEvent.KEYCODE_ENTER){
+                    String location = mSearchText.getText().toString();
+                    for(int j=0; j<mMarker.size();j++){
+                        if(mMarker.get(j).getTitle().equals(location)){
+                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mMarker.get(j).getPosition(),15));
+                            markerBounce(mMarker.get(j));
+                        }
+                    }
+                }
+                return false;
+            }
+        });
     }
 
     private void addMarkersToMap() {
@@ -297,6 +343,7 @@ public class MapActivity extends AppCompatActivity implements
         // Any showing info window closes when the map is clicked.
         // Clear the currently selected marker.
         mSelectedMarker = null;
+        closeKeyboard();
     }
 
     //
@@ -358,6 +405,14 @@ public class MapActivity extends AppCompatActivity implements
     @Override
     public void onInfoWindowLongClick(Marker marker) {
         Toast.makeText(this, "Info Window long click", Toast.LENGTH_SHORT).show();
+    }
+
+    private void closeKeyboard(){
+        View view = this.getCurrentFocus();
+        if (view != null){
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(),0);
+        }
     }
 
 
