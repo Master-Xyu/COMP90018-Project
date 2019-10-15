@@ -64,7 +64,6 @@
                 android:layout_marginRight="5dp"
                 android:layout_marginBottom="5dp"
                 android:layout_weight="1"
-                android:editable="false"
                 android:gravity="center"
                 android:text=""
                 android:textSize="20sp" />
@@ -87,7 +86,7 @@
                 android:textSize="20sp"
                 app:fontFamily="sans-serif-black" />
 
-            <EditText
+            <TextView
                 android:id="@+id/name"
                 android:layout_width="210dp"
                 android:layout_height="match_parent"
@@ -96,11 +95,13 @@
                 android:layout_marginRight="5dp"
                 android:layout_marginBottom="5dp"
                 android:layout_weight="1"
-                android:background="@drawable/border"
                 android:gravity="center"
                 android:text=""
-                android:maxLength="20"
-                android:textSize="30sp" />
+                android:textSize="20sp"
+                android:clickable="true"
+                android:drawableRight="@drawable/arrow"
+                android:paddingRight="12dp"/>
+
         </LinearLayout>
 
         <LinearLayout
@@ -126,26 +127,10 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/update"
-                style="@android:style/Widget.Holo.Button"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:onClick="updateOnClick"
-                android:text="Update" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="@drawable/layout_border"
-            android:orientation="horizontal">
-
-            <Button
                 android:id="@+id/signout"
                 style="@style/SignoutButton"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:onClick="updateOnClick"
                 android:text="Sign Out" />
         </LinearLayout>
 

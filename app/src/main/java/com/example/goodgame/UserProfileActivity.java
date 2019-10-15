@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -26,11 +25,12 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.squareup.picasso.Picasso;
 
 public class UserProfileActivity extends AppCompatActivity {
     FirebaseUser user_;
     ImageView avatar_;
-    EditText name_;
+    TextView name_;
     TextView email_;
     String TAG = "Profile";
     Uri avatar_uri_;
@@ -43,7 +43,7 @@ public class UserProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_userprofile);
         user_ = FirebaseAuth.getInstance().getCurrentUser();
         email_ = (TextView) findViewById(R.id.email);
-        name_ = (EditText) findViewById(R.id.name);
+        name_ = (TextView) findViewById(R.id.name);
         avatar_ = (ImageView) findViewById(R.id.avatar);
         avatar_uri_ = null;
         setTitle("Profile");
@@ -51,8 +51,10 @@ public class UserProfileActivity extends AppCompatActivity {
             email_.setText(user_.getEmail());
             name_.setText(user_.getDisplayName());
             Uri u = user_.getPhotoUrl();
-            if(u != null)
-                avatar_.setImageURI(u);
+            if(u != null) {
+                Log.e(TAG, u.toString());
+                Picasso.get().load(u).into(avatar_);
+            }
         }
 
         Button bt = (Button) findViewById(R.id.signout);
@@ -64,6 +66,13 @@ public class UserProfileActivity extends AppCompatActivity {
                 Intent intent = new Intent(UserProfileActivity.this, EmailPasswordActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
+            }
+        });
+
+        name_.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                changeName(view);
             }
         });
 
@@ -104,26 +113,6 @@ public class UserProfileActivity extends AppCompatActivity {
         mCameraDialog_.show();
     }
 
-    public void updateOnClick(View v){
-
-        UserProfileChangeRequest.Builder profileUpdatesBuilder = new UserProfileChangeRequest.Builder();
-        profileUpdatesBuilder.setDisplayName(name_.getText().toString());
-        if(avatar_uri_ != null){
-            profileUpdatesBuilder.setPhotoUri(avatar_uri_);
-        }
-        UserProfileChangeRequest profileUpdates = profileUpdatesBuilder.build();
-
-        user_.updateProfile(profileUpdates)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Log.d(TAG, "User profile updated.");
-                        }
-                    }
-                });
-    }
-
     public class switchListener implements View.OnClickListener{
         @Override
         public void onClick(View view) {
@@ -153,13 +142,65 @@ public class UserProfileActivity extends AppCompatActivity {
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        String URI = data.getExtras().getString("URI");
-        Log.i(TAG, URI);
-        if(URI == "Failed" || URI == "Canceled"){
-            return;
+        UserProfileChangeRequest profileUpdates = null;
+        switch (requestCode){
+            case 1:
+                String URI = data.getExtras().getString("URI");
+                Log.i(TAG, URI);
+                if(URI.equals("Failed") || URI.equals("Canceled") || URI == null){
+                    return;
+                }
+
+                profileUpdates = new UserProfileChangeRequest
+                        .Builder()
+                        .setPhotoUri(avatar_uri_)
+                        .build();
+
+                user_.updateProfile(profileUpdates)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Log.d(TAG, "User avatar updated.");
+                                    Toast.makeText(UserProfileActivity.this, "Update complete.", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+
+                avatar_uri_ = Uri.parse(URI);
+                avatar_.setImageURI(avatar_uri_);
+                break;
+            case 2:
+                String name = data.getExtras().getString("username");
+                if(name == null || name.equals("")){
+                    return;
+                }
+
+                profileUpdates = new UserProfileChangeRequest
+                        .Builder()
+                        .setDisplayName(name)
+                        .build();
+
+                user_.updateProfile(profileUpdates)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Log.d(TAG, "Username updated.");
+                                    Toast.makeText(UserProfileActivity.this, "Update complete.", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+
+                name_.setText(name);
+                break;
         }
-        avatar_uri_ = Uri.parse(URI);
-        avatar_.setImageURI(avatar_uri_);
+
     }
 
+    public void changeName(View v){
+        Intent intent = new Intent(UserProfileActivity.this, ProfileNameChangeActivity.class);
+        intent.putExtra("username", name_.getText());
+        startActivityForResult(intent, 2);
+    }
 }
