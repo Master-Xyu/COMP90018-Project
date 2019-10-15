@@ -183,6 +183,7 @@ public class EmailPasswordActivity extends BaseActivity implements
                             Toast.makeText(EmailPasswordActivity.this,
                                     "Verification email sent to " + user.getEmail(),
                                     Toast.LENGTH_SHORT).show();
+                            updateUI(user);
                         } else {
                             Log.e(TAG, "sendEmailVerification", task.getException());
                             Toast.makeText(EmailPasswordActivity.this,
@@ -234,9 +235,8 @@ public class EmailPasswordActivity extends BaseActivity implements
                 findViewById(R.id.emailPasswordButtons).setVisibility(View.GONE);
                 findViewById(R.id.emailPasswordFields).setVisibility(View.GONE);
                 findViewById(R.id.signedInButtons).setVisibility(View.VISIBLE);
+                findViewById(R.id.verifyEmailButton).setEnabled(!user.isEmailVerified());
             }
-
-            findViewById(R.id.verifyEmailButton).setEnabled(!user.isEmailVerified());
         } else {
             mStatusTextView.setText(R.string.signed_out);
             mDetailTextView.setText(null);
