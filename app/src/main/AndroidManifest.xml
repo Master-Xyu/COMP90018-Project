@@ -27,7 +27,7 @@
         -->
         <activity
             android:name=".MapActivity"
-            android:label="@string/title_activity_map"></activity>
+            android:label="@string/title_activity_map" android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
 
         <activity android:name=".AddPostActivity" />
         <!--
@@ -45,9 +45,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity android:name=".BaseActivity" />
         <activity android:name=".DetailActivity" />
-        <activity android:name=".ListActivity" />
+        <activity android:name=".ListActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
         <activity android:name=".UserProfileActivity" />
         <activity
             android:name=".Float.FloatActivity"
@@ -78,5 +80,12 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+
+
+
+
 
 </manifest>

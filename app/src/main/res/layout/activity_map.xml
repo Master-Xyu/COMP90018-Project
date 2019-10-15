@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:visibility="visible">
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="44dp"
@@ -16,14 +21,75 @@
             android:layout_width="205dp"
             android:layout_height="match_parent"
             android:layout_gravity="top|left"
+            style="@android:style/Widget.Holo.Button"
             android:text="Map" />
 
-                <Button
-                    android:id="@+id/btnList"
+        <Button
+            android:id="@+id/btnList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|top"
+            style="@android:style/Widget.Holo.Button"
+            android:text="List" />
+
+    </LinearLayout>
+
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <!--
+                <SearchView
+                    android:id="@+id/search_location"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="right|top"
-                    android:text="List" />
+                    android:layout_margin="10dp"
+                    android:queryHint="Search..."
+                    android:iconifiedByDefault="false"
+                    android:elevation="5dp"
+                    android:background="@drawable/bg_round"
+                    ></SearchView>
+                    -->
+        <fragment
+            android:id="@+id/map"
+            class="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <RelativeLayout
+            android:id="@+id/searchLayout"
+            android:layout_width="338dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/bg_round"
+            android:elevation="10dp">
+            <!--
+            <ImageView
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:id="@+id/ic_magnify"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:srcCompat="@drawable/ic_magnify"/>
+                -->
+            <AutoCompleteTextView
+                android:id="@+id/search_input1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@null"
+                android:hint="  Search..."
+                android:imeOptions="actionSearch"
+                android:textColor="#000"
+                android:textSize="15sp" />
+
+        </RelativeLayout>
+
 
 <!--        <Button-->
 <!--            android:id="@+id/action_add_post"-->
@@ -33,15 +99,8 @@
 <!--            android:onClick="openPostActivity"-->
 <!--            android:text="Add Post"-->
 <!--            android:title="Add Post" />-->
-    </LinearLayout>
 
-<fragment xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:map="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/map"
-    android:name="com.google.android.gms.maps.SupportMapFragment"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MapActivity" />
+    </FrameLayout>
+
 
 </LinearLayout>

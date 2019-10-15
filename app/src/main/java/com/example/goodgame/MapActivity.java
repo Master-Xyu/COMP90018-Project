@@ -3,6 +3,8 @@ package com.example.goodgame;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -10,18 +12,34 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.Interpolator;
+import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowCloseListener;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowLongClickListener;
+import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -33,7 +51,21 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-public class MapActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnMapClickListener, GoogleMap.OnInfoWindowClickListener, GoogleMap.OnInfoWindowCloseListener, GoogleMap.OnInfoWindowLongClickListener {
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+/**
+ * This shows how to place markers on a map.
+ */
+public class MapActivity extends AppCompatActivity implements
+        OnMarkerClickListener,
+        OnInfoWindowClickListener,
+        OnInfoWindowLongClickListener,
+        OnInfoWindowCloseListener,
+        OnMapAndViewReadyListener.OnGlobalLayoutAndMapReadyListener,
+        GoogleMap.OnMapClickListener {
 
     String TAG = "MapActivity";
     private FirebaseFirestore db;
@@ -42,33 +74,67 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
 
     private static LatLng myLocation;
 
-    private int[]score={20,30,40,50,60,70,80,90};
+    private int[]score={20,30,40,50,60,70,80,90,20,30,40,50,60,70,80,90,70,80,90};
+
+    private List<Marker> mMarker;
 
     private Marker mSelectedMarker;
+
     private GoogleMap mMap;
-    Button btnMap;
-    Button btnList;
+
+    private SearchView searchView;
+
+    private AutoCompleteTextView mSearchText;
+
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         db = FirebaseFirestore.getInstance();
+        /*
+        db.collection("stopInfo").get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        if(!queryDocumentSnapshots.isEmpty()){
+                            List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
+                            for(DocumentSnapshot d : list) {
+                                StopDetails s = d.toObject(StopDetails.class);
+                                stopList.add(s);
+                            }
+                        }
+                    }
+                });
+         */
+        /*
+        db.collection("stopInfo").get().
+                addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful() && task.getResult() != null) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                StopDetails s = document.toObject(StopDetails.class);
+                                stopList.add(s);
+                            }
+                        }
+                    }
+                });
+         */
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-//        new OnMapAndViewReadyListener(mapFragment,this);
-        mapFragment.getMapAsync(this);
+        setTitle("");
+        SupportMapFragment mapFragment =
+                (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        new OnMapAndViewReadyListener(mapFragment, this);
 
 
-        FirebaseUser user= FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if(user.getPhotoUrl() != null){
             BaseApplication.changeImage(user.getPhotoUrl());
         }
 
-        btnMap = (Button) findViewById(R.id.btnMap);
+        Button btnMap = (Button) findViewById(R.id.btnMap);
         btnMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -77,7 +143,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             }
         });
 
-        btnList = (Button) findViewById(R.id.btnList);
+        Button btnList = (Button) findViewById(R.id.btnList);
         btnList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -85,6 +151,43 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 startActivity(intent3);
             }
         });
+
+
+        String[] name = new String[StopDetailsList.STOPS.length];
+        for (int i=0; i<name.length;i++){
+            name[i] = StopDetailsList.STOPS[i].getName();
+        }
+        mSearchText = findViewById(R.id.search_input1);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,name);
+        mSearchText.setAdapter(adapter);
+        AdapterView.OnItemClickListener mAutocompleteClickListener = new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String location = mSearchText.getText().toString();
+
+                for(int j=0; j<mMarker.size();j++){
+                    if(mMarker.get(j).getTitle().equals(location)){
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mMarker.get(j).getPosition(),15));
+                        markerBounce(mMarker.get(j));
+                    }
+                }
+            }
+        };
+        /*
+        mSearchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
+                if(actionId == EditorInfo.IME_ACTION_SEARCH
+                        ||actionId == EditorInfo.IME_ACTION_DONE
+                        ||keyEvent.getAction() == KeyEvent.ACTION_DOWN
+                        ||keyEvent.getAction() == KeyEvent.KEYCODE_ENTER){
+                    String location = mSearchText.getText().toString();
+                }
+                return false;
+            }
+        });
+         */
+
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         locationListener = new LocationListener() {
@@ -127,23 +230,13 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             }
         }
         locationManager.requestLocationUpdates("gps", 10000, 0, locationListener);
-
     }
 
-
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
     @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
+    public void onMapReady(GoogleMap map) {
+        mMap = map;
 
+        // Hide the zoom controls as the button will cover it.
         mMap.getUiSettings().setZoomControlsEnabled(false);
 
         // Set listeners for marker events.  See the bottom of this class for their behavior.
@@ -159,24 +252,21 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
         mMap.setContentDescription("Map with lots of markers.");
 
         addMarkersToMap();
-//        // Add a marker in Sydney and move the camera
-//        LatLng sydney = new LatLng(-34, 151);
-//        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-//        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+
+
     }
 
     private void addMarkersToMap() {
-        //if (name.size()==0 )
-        //    return;
+        mMarker = new ArrayList<>();
         for (int i=0; i<StopDetailsList.STOPS.length;i++){
             Marker m = mMap.addMarker(new MarkerOptions()
                     .position(StopDetailsList.STOPS[i].getPosition())
                     .title(StopDetailsList.STOPS[i].getName())
                     .snippet(StopDetailsList.STOPS[i].getDescription())
-                    //.title(stopList.get(i).getName())
-                    //.snippet(stopList.get(i).getDescription())
                     .icon(getIcon(score[i])));
+            //.icon(BitmapDescriptorFactory.fromResource(R.drawable.arrow)) //using custom icon
             //.infoWindowAnchor(0.5f, 0.5f));
+            mMarker.add(m);
         }
     }
 
@@ -184,8 +274,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     public BitmapDescriptor getIcon(int score){
         if (score<=30){
             //safe
-
-            //.icon(BitmapDescriptorFactory.fromResource(R.drawable.arrow)) //using custom icon
             return BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
         }
         else if(score>30 && score<80){
@@ -210,7 +298,20 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     //
     @Override
     public boolean onMarkerClick(final Marker marker) {
+        markerBounce(marker);
+        if (marker.equals(mSelectedMarker)) {
+            mSelectedMarker = null;
+            return true;
+        }
 
+        mSelectedMarker = marker;
+
+        // Return false to indicate that we have not consumed the event and that we wish
+        // for the default behavior to occur.
+        return false;
+
+    }
+    public void markerBounce(Marker marker){
         //set the bounced marker
         final Handler handler = new Handler();
         final long start = SystemClock.uptimeMillis();
@@ -232,17 +333,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
                 }
             }
         });
-        if (marker.equals(mSelectedMarker)) {
-            mSelectedMarker = null;
-            return true;
-        }
-
-        mSelectedMarker = marker;
-
-        // Return false to indicate that we have not consumed the event and that we wish
-        // for the default behavior to occur.
-        return false;
-
     }
 
 
@@ -250,6 +340,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     public void onInfoWindowClick(Marker marker) {
         Toast.makeText(this, "Click Info Window", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(MapActivity.this, DetailActivity.class);
+        intent.putExtra("stopID",marker.getId()+1);
         startActivity(intent);
     }
 
@@ -264,8 +355,5 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
     }
 
 
-    @Override
-    public void onPointerCaptureChanged(boolean hasCapture) {
 
-    }
 }
