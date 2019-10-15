@@ -105,7 +105,13 @@
             app:layout_constraintBottom_toBottomOf="@id/bottom_guideline"
             app:layout_constraintLeft_toLeftOf="@+id/left_guidline"
             app:layout_constraintRight_toRightOf="@+id/right_guidline"/>
-
+    <Button
+        android:id="@+id/gamebtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Game"
+        style="@style/SignoutButton"
+        app:layout_constraintBottom_toBottomOf="@id/bottom_guideline"/>
         <RelativeLayout
             android:id="@+id/searchLayout"
             android:layout_width="0dp"

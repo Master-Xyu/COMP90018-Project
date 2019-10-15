@@ -125,6 +125,14 @@ public class MapActivity extends AppCompatActivity implements
                 startActivity(intent3);
             }
         });
+        Button btnGame = (Button) findViewById(R.id.gamebtn);
+        btnGame.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MapActivity.this, GameActivity.class);
+                startActivity(intent);
+            }
+        });
 
 
 

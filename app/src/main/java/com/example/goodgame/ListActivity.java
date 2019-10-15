@@ -109,16 +109,6 @@ public class ListActivity extends AppCompatActivity {
                 return false;
             }
         });
-        /*
-        ImageButton btnClear = (ImageButton)findViewById(R.id.ic_clear2);
-        btnClear.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
-
-        */
 
             //using gps
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
