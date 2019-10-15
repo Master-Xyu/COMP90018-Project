@@ -27,9 +27,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-
 /**
  * Demonstrates the use of {@link RecyclerView} with a {@link LinearLayoutManager}
  */
@@ -39,10 +36,6 @@ public class RecyclerViewFragment extends Fragment {
     private static final String KEY_LAYOUT_MANAGER = "layoutManager";
     private static final int SPAN_COUNT = 2;
     private static final int DATASET_COUNT = 60;
-
-    //?????
-    FirebaseAuth firebaseAuth;
-    FirebaseUser user;
 
     private enum LayoutManagerType {
         GRID_LAYOUT_MANAGER,

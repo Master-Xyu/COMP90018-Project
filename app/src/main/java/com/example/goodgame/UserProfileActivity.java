@@ -22,33 +22,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.goodgame.Photo.SimpleActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-import com.squareup.picasso.Picasso;
-
-import java.util.HashMap;
 
 public class UserProfileActivity extends AppCompatActivity {
     FirebaseUser user_;
-    FirebaseAuth firebaseAuth;
-    FirebaseDatabase firebaseDatabase;
-    DatabaseReference databaseReference;
-    StorageReference storageReference;
-    //path to ???
-
     ImageView avatar_;
     EditText name_;
     TextView email_;
@@ -57,66 +37,23 @@ public class UserProfileActivity extends AppCompatActivity {
     public static final int REQUSET = 1;
     Dialog mCameraDialog_;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_userprofile);
-        firebaseAuth=FirebaseAuth.getInstance();
-        firebaseDatabase=FirebaseDatabase.getInstance();
-        databaseReference=firebaseDatabase.getReference("Users");
-        storageReference= FirebaseStorage.getInstance().getReference();
-
-
         user_ = FirebaseAuth.getInstance().getCurrentUser();
         email_ = (TextView) findViewById(R.id.email);
         name_ = (EditText) findViewById(R.id.name);
         avatar_ = (ImageView) findViewById(R.id.avatar);
         avatar_uri_ = null;
-
-
-        //??? get info of current signed in user
-        Query query=databaseReference.orderByChild("email").equalTo(user_.getEmail());
-        query.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    //check until required data get
-                for(DataSnapshot ds:dataSnapshot.getChildren()){
-                    //get data
-                    String name=""+ds.child("name").getValue();
-                    String email=""+ds.child("email").getValue();
-                    String image=""+ds.child("image").getValue();
-                    email_.setText(email);
-                    name_.setText(name);
-                    //try to add image
-                    try{
-                        //if image is received then set
-                        Picasso.get().load(image).into(avatar_);
-                    }
-                    catch (Exception e){
-                        //if there is ang exception while getting image then set default
-                        Picasso.get().load(R.drawable.default_avatar).into(avatar_);
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-
         setTitle("Profile");
-        //replaced by firebase way
-//        if(user_ != null){
-////            email_.setText(user_.getEmail());
-////            name_.setText(user_.getDisplayName());
-//            Uri u = user_.getPhotoUrl();
-//            if(u != null)
-//                avatar_.setImageURI(u);
-//        }
+        if(user_ != null){
+            email_.setText(user_.getEmail());
+            name_.setText(user_.getDisplayName());
+            Uri u = user_.getPhotoUrl();
+            if(u != null)
+                avatar_.setImageURI(u);
+        }
 
         Button bt = (Button) findViewById(R.id.signout);
         bt.setOnClickListener(new View.OnClickListener() {
@@ -131,7 +68,6 @@ public class UserProfileActivity extends AppCompatActivity {
         });
 
     }
-    //change profile??
     public void switchAvatar(View view){
         Intent intent = new Intent(UserProfileActivity.this, SimpleActivity.class);
         setDialog();
@@ -169,10 +105,6 @@ public class UserProfileActivity extends AppCompatActivity {
     }
 
     public void updateOnClick(View v){
-        //path and name stored in firebase
-//        String filePath=storageReference+""+avatar_uri_+""+user_.getUid();
-
-
 
         UserProfileChangeRequest.Builder profileUpdatesBuilder = new UserProfileChangeRequest.Builder();
         profileUpdatesBuilder.setDisplayName(name_.getText().toString());
@@ -190,40 +122,6 @@ public class UserProfileActivity extends AppCompatActivity {
                         }
                     }
                 });
-
-        //path and name stored in firebase
-        String filePathAndName=storageReference+""+avatar_uri_+""+user_.getUid();
-        StorageReference storageReference2=storageReference.child(filePathAndName);
-        storageReference2.putFile(avatar_uri_).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        Task<Uri> uriTask=taskSnapshot.getStorage().getDownloadUrl();
-                        while (!uriTask.isSuccessful());
-                        Uri downloadUri=uriTask.getResult();
-                        if(uriTask.isSuccessful()){
-                            HashMap<String,Object> results=new HashMap<>();
-                            results.put(filePathAndName,downloadUri.toString());
-                            databaseReference.child(user_.getUid()).updateChildren(results)
-                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void aVoid) {
-
-                                        }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-
-                                        }
-                                    });
-                        }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-
-            }
-        });
     }
 
     public class switchListener implements View.OnClickListener{
