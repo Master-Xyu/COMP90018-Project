@@ -24,6 +24,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.squareup.picasso.Picasso;
 
@@ -50,7 +51,15 @@ public class UserProfileActivity extends AppCompatActivity {
         if(user_ != null){
             email_.setText(user_.getEmail());
             name_.setText(user_.getDisplayName());
-            Uri u = user_.getPhotoUrl();
+
+            Uri u = null;
+            for (UserInfo userInfo : user_.getProviderData()) {
+                if (userInfo.getPhotoUrl() != null) {
+                    u = userInfo.getPhotoUrl();
+                }
+            }
+
+            //Uri u = user_.getPhotoUrl();
             if(u != null) {
                 Log.e(TAG, u.toString());
                 Picasso.get().load(u).into(avatar_);
@@ -100,15 +109,15 @@ public class UserProfileActivity extends AppCompatActivity {
         mCameraDialog_.setContentView(root);
         Window dialogWindow = mCameraDialog_.getWindow();
         dialogWindow.setGravity(Gravity.BOTTOM);
- //       dialogWindow.setWindowAnimations(R.style.dialogstyle); // 添加动画
-        WindowManager.LayoutParams lp = dialogWindow.getAttributes(); // 获取对话框当前的参数值
-        lp.x = 0; // 新位置X坐标
-        lp.y = 0; // 新位置Y坐标
-        lp.width = (int) getResources().getDisplayMetrics().widthPixels; // 宽度
+
+        WindowManager.LayoutParams lp = dialogWindow.getAttributes();
+        lp.x = 0;
+        lp.y = 0;
+        lp.width = (int) getResources().getDisplayMetrics().widthPixels;
         root.measure(0, 0);
         lp.height = root.getMeasuredHeight();
 
-        lp.alpha = 9f; // 透明度
+        lp.alpha = 9f;
         dialogWindow.setAttributes(lp);
         mCameraDialog_.show();
     }
@@ -119,20 +128,17 @@ public class UserProfileActivity extends AppCompatActivity {
             Intent intent = new Intent(UserProfileActivity.this, SimpleActivity.class);
             switch (view.getId()) {
                 case R.id.btn_choose_img:
-                    //选择照片按钮
-                    Toast.makeText(UserProfileActivity.this, "请选择照片", Toast.LENGTH_SHORT).show();
+
                     intent.putExtra("mode", 0);
                     startActivityForResult(intent, REQUSET);
                     break;
                 case R.id.btn_open_camera:
-                    //拍照按钮
-                    Toast.makeText(UserProfileActivity.this, "即将打开相机", Toast.LENGTH_SHORT).show();
+
                     intent.putExtra("mode", 1);
                     startActivityForResult(intent, REQUSET);
                     break;
                 case R.id.btn_cancel:
-                    //取消按钮
-                    Toast.makeText(UserProfileActivity.this, "取消", Toast.LENGTH_SHORT).show();
+
                     break;
 
 
@@ -150,11 +156,13 @@ public class UserProfileActivity extends AppCompatActivity {
                 if(URI.equals("Failed") || URI.equals("Canceled") || URI == null){
                     return;
                 }
-
+                avatar_uri_ = Uri.parse(URI);
                 profileUpdates = new UserProfileChangeRequest
                         .Builder()
                         .setPhotoUri(avatar_uri_)
                         .build();
+
+                avatar_.setImageURI(avatar_uri_);
 
                 user_.updateProfile(profileUpdates)
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -167,8 +175,7 @@ public class UserProfileActivity extends AppCompatActivity {
                             }
                         });
 
-                avatar_uri_ = Uri.parse(URI);
-                avatar_.setImageURI(avatar_uri_);
+                BaseApplication.changeImage(avatar_uri_);
                 break;
             case 2:
                 String name = data.getExtras().getString("username");

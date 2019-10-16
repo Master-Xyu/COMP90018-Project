@@ -34,7 +34,7 @@ public class BaseApplication extends Application {
         FloatWindow
                 .with(getApplicationContext())
                 .setView(imageView_)
-                .setWidth(Screen.width, 0.15f) //设置悬浮控件宽高
+                .setWidth(Screen.width, 0.15f)
                 .setHeight(Screen.width, 0.15f)
                 .setX(Screen.width, 0.8f)
                 .setY(Screen.height, 0.3f)
