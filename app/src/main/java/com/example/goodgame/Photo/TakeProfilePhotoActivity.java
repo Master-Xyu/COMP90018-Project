@@ -17,14 +17,12 @@ import com.jph.takephoto.app.TakePhoto;
 import com.jph.takephoto.app.TakePhotoActivity;
 import com.jph.takephoto.compress.CompressConfig;
 import com.jph.takephoto.model.CropOptions;
-import com.jph.takephoto.model.TImage;
 import com.jph.takephoto.model.TResult;
 import com.jph.takephoto.model.TakePhotoOptions;
 
 import java.io.File;
-import java.util.ArrayList;
 
-public class SimpleActivity extends TakePhotoActivity {
+public class TakeProfilePhotoActivity extends TakePhotoActivity {
     private CustomHelper customHelper;
     private CropOptions.Builder cropBuilder_;
     private TakePhotoOptions.Builder takeBuilder_;
@@ -90,12 +88,6 @@ public class SimpleActivity extends TakePhotoActivity {
         intent.putExtra("URI", imageUri_.toString());
         setResult(RESULT_OK, intent);
         finish();
-    }
-
-    private void showImg(ArrayList<TImage> images) {
-        Intent intent=new Intent(this,ResultActivity.class);
-        intent.putExtra("images",images);
-        startActivity(intent);
     }
 
     private void checkPermission() {

@@ -63,7 +63,7 @@ public class DetailActivity extends AppCompatActivity {
         }
         else{
             //???
-            startActivity(new Intent(DetailActivity.this,MainActivity.class));
+            startActivity(new Intent(DetailActivity.this,EmailPasswordActivity.class));
             finish();
         }
     }

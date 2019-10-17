@@ -1,6 +1,7 @@
 package com.example.goodgame;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.view.animation.BounceInterpolator;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.example.goodgame.Float.FloatWindow;
 import com.example.goodgame.Float.MoveType;
 import com.example.goodgame.Float.PermissionListener;
@@ -24,10 +26,12 @@ public class BaseApplication extends Application {
 
     private static final String TAG = "FloatWindow";
     public static ImageView imageView_;
+    private static Context BaseContext;
     @Override
     public void onCreate() {
         super.onCreate();
 
+        BaseContext = BaseApplication.this.getApplicationContext();
         imageView_ = new ImageView(getApplicationContext());
         imageView_.setImageResource(R.drawable.default_avatar);
 
@@ -108,6 +112,7 @@ public class BaseApplication extends Application {
     };
 
     public static void changeImage(Uri uri){
-        imageView_.setImageURI(uri);
+        Glide.with(BaseContext).load(uri).error(R.drawable.default_avatar).into(imageView_);
     }
+
 }

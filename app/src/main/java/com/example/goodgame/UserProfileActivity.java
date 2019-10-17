@@ -19,14 +19,19 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.goodgame.Photo.SimpleActivity;
+import com.bumptech.glide.Glide;
+import com.example.goodgame.Photo.TakeProfilePhotoActivity;
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserInfo;
 import com.google.firebase.auth.UserProfileChangeRequest;
-import com.squareup.picasso.Picasso;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 public class UserProfileActivity extends AppCompatActivity {
     FirebaseUser user_;
@@ -52,17 +57,10 @@ public class UserProfileActivity extends AppCompatActivity {
             email_.setText(user_.getEmail());
             name_.setText(user_.getDisplayName());
 
-            Uri u = null;
-            for (UserInfo userInfo : user_.getProviderData()) {
-                if (userInfo.getPhotoUrl() != null) {
-                    u = userInfo.getPhotoUrl();
-                }
-            }
-
-            //Uri u = user_.getPhotoUrl();
+            Uri u = user_.getPhotoUrl();
             if(u != null) {
                 Log.e(TAG, u.toString());
-                Picasso.get().load(u).into(avatar_);
+                Glide.with(UserProfileActivity.this).load(u).error(R.drawable.default_avatar).into(avatar_);
             }
         }
 
@@ -87,7 +85,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
     }
     public void switchAvatar(View view){
-        Intent intent = new Intent(UserProfileActivity.this, SimpleActivity.class);
+        Intent intent = new Intent(UserProfileActivity.this, TakeProfilePhotoActivity.class);
         setDialog();
     }
 
@@ -125,7 +123,7 @@ public class UserProfileActivity extends AppCompatActivity {
     public class switchListener implements View.OnClickListener{
         @Override
         public void onClick(View view) {
-            Intent intent = new Intent(UserProfileActivity.this, SimpleActivity.class);
+            Intent intent = new Intent(UserProfileActivity.this, TakeProfilePhotoActivity.class);
             switch (view.getId()) {
                 case R.id.btn_choose_img:
 
@@ -157,25 +155,47 @@ public class UserProfileActivity extends AppCompatActivity {
                     return;
                 }
                 avatar_uri_ = Uri.parse(URI);
-                profileUpdates = new UserProfileChangeRequest
-                        .Builder()
-                        .setPhotoUri(avatar_uri_)
-                        .build();
 
-                avatar_.setImageURI(avatar_uri_);
+                FirebaseStorage storage = FirebaseStorage.getInstance();
+                StorageReference avatarRef = storage.getReference().child("avatars/"+avatar_uri_.getLastPathSegment());
 
-                user_.updateProfile(profileUpdates)
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                UploadTask uploadTask = avatarRef.putFile(avatar_uri_);
+
+                uploadTask.addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        Toast.makeText(UserProfileActivity.this, "Upload failed.", Toast.LENGTH_SHORT).show();
+                    }
+                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+
+                        Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                             @Override
-                            public void onComplete(@NonNull Task<Void> task) {
+                            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                                if (!task.isSuccessful()) {
+                                    throw task.getException();
+                                }
+                                return avatarRef.getDownloadUrl();
+                            }
+                        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Uri> task) {
                                 if (task.isSuccessful()) {
-                                    Log.d(TAG, "User avatar updated.");
-                                    Toast.makeText(UserProfileActivity.this, "Update complete.", Toast.LENGTH_SHORT).show();
+
+                                    Uri downloadUri = task.getResult();
+                                    updateAvatar(downloadUri);
+
+                                } else {
+                                    Toast.makeText(UserProfileActivity.this, "Upload failed.", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
 
-                BaseApplication.changeImage(avatar_uri_);
+
+                    }
+                });
                 break;
             case 2:
                 String name = data.getExtras().getString("username");
@@ -209,5 +229,28 @@ public class UserProfileActivity extends AppCompatActivity {
         Intent intent = new Intent(UserProfileActivity.this, ProfileNameChangeActivity.class);
         intent.putExtra("username", name_.getText());
         startActivityForResult(intent, 2);
+    }
+
+    public void updateAvatar(Uri u){
+        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest
+                .Builder()
+                .setPhotoUri(u)
+                .build();
+
+        avatar_uri_ = u;
+        Glide.with(UserProfileActivity.this).load(avatar_uri_).error(R.drawable.default_avatar).into(avatar_);
+
+        user_.updateProfile(profileUpdates)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "User avatar updated.");
+                            Toast.makeText(UserProfileActivity.this, "Update complete.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+        BaseApplication.changeImage(avatar_uri_);
     }
 }
