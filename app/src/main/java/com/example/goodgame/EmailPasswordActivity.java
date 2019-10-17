@@ -109,7 +109,7 @@ public class EmailPasswordActivity extends BaseActivity implements
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(EmailPasswordActivity.this, "Authentication failed.",
+                            Toast.makeText(EmailPasswordActivity.this, "The email address has been used.",
                                     Toast.LENGTH_SHORT).show();
                             updateUI(null);
                         }
@@ -143,7 +143,7 @@ public class EmailPasswordActivity extends BaseActivity implements
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
-                            Toast.makeText(EmailPasswordActivity.this, "Authentication failed.",
+                            Toast.makeText(EmailPasswordActivity.this, "Wrong email address or password.",
                                     Toast.LENGTH_SHORT).show();
                             updateUI(null);
                         }
@@ -167,6 +167,8 @@ public class EmailPasswordActivity extends BaseActivity implements
     private void sendEmailVerification() {
         // Disable button
         findViewById(R.id.verifyEmailButton).setEnabled(false);
+        updateUI(null);
+
 
         // Send verification email
         // [START send_email_verification]
@@ -183,13 +185,13 @@ public class EmailPasswordActivity extends BaseActivity implements
                             Toast.makeText(EmailPasswordActivity.this,
                                     "Verification email sent to " + user.getEmail(),
                                     Toast.LENGTH_SHORT).show();
-                            updateUI(user);
                         } else {
                             Log.e(TAG, "sendEmailVerification", task.getException());
                             Toast.makeText(EmailPasswordActivity.this,
                                     "Failed to send verification email.",
                                     Toast.LENGTH_SHORT).show();
                         }
+
                         // [END_EXCLUDE]
                     }
                 });
