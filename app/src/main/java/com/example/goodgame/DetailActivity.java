@@ -30,8 +30,8 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void openPostActivity() {
-        //Intent intent =new Intent(this,AddPostActivity.class);
-        //startActivity(intent);
+        Intent intent =new Intent(this,AddPostActivity.class);
+        startActivity(intent);
 
     }
 
@@ -63,7 +63,7 @@ public class DetailActivity extends AppCompatActivity {
         }
         else{
             //???
-            startActivity(new Intent(DetailActivity.this,EmailPasswordActivity.class));
+            startActivity(new Intent(DetailActivity.this,MapActivity.class));
             finish();
         }
     }
