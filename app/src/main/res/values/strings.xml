@@ -319,6 +319,7 @@
     <string name="title_activity_tabbed">TabbedActivity</string>
     <string name="tab_text_1">Tab 1</string>
     <string name="tab_text_2">Tab 2</string>
+    <string name="title_activity_profile_name_change">ProfileNameChangeActivity</string>
     <string-array name="layers_array">
         <item>@string/normal</item>
         <item>@string/hybrid</item>
@@ -326,5 +327,4 @@
         <item>@string/terrain</item>
         <item>@string/none_map</item>
     </string-array>
-    <string name="title_activity_profile_name_change">ProfileNameChangeActivity</string>
 </resources>
