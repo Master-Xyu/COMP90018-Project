@@ -2,7 +2,6 @@ package com.example.goodgame;
 
 
 import com.google.android.gms.maps.model.LatLng;
-import com.google.firebase.auth.FirebaseAuth;
 
 
 public class StopDetails {
@@ -11,17 +10,23 @@ public class StopDetails {
     private String name, description;
     private Boolean isFreeZone;
     private LatLng position;
-    FirebaseAuth firebaseAuth;
+    private int id;
+    String distance;
 
     public StopDetails() {
 
     }
 
-    public StopDetails(String name, String description, Boolean isFreeZone, LatLng position) {
+    public StopDetails(String name, String description, Boolean isFreeZone, LatLng position, int id) {
         this.name = name;
         this.description = description;
         this.isFreeZone = isFreeZone;
         this.position = position;
+        this.id = id;
+    }
+
+    public void setDistance(String distance) {
+        this.distance = distance;
     }
 
     public String getName() {
@@ -39,28 +44,8 @@ public class StopDetails {
     public LatLng getPosition() {
         return position;
     }
-}
 
-    /*handle menu item clicks*/
-//    public  boolean onOptionsItemSelected(MenuItem item){
-//        int id =item.getItemId();
-//        if(id==R.id.action_add_post) {
-//        startActivity(new Intent(getActivity(),AddPostActivity.class))
-//        }
-//
-//    }
-//
-//    public  void checkUserStatus(){
-//        //get current user
-//        FirebaseUser user =firebaseAuth.getCurrentUser();
-//        if(user!=null){
-//            //???
-//            //
-//            //
-//        }
-//        else{
-//            startActivity(new Intent(getActivity(),MainActivity.class));
-//            getActivity().finish();
-//        }
-//    }
-//}
+    public String getDistance() { return distance; }
+
+    public int getId() { return id; }
+}

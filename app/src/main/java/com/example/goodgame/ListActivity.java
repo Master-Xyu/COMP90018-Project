@@ -8,12 +8,8 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.SearchView;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -38,9 +34,11 @@ public class ListActivity extends AppCompatActivity {
     private LocationListener locationListener;
     private LocationManager locationManager;
     private static LatLng myLocation;
-    private ArrayList<StopDetails> mStop = new ArrayList<>();
-    private RecyclerViewAdapter adapter;
-    private SearchView searchView;
+
+    private ArrayList<String> mName = new ArrayList<>();
+    private ArrayList<String> mDescription = new ArrayList<>();
+    private ArrayList<String> mDistance = new ArrayList<>();
+
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -67,7 +65,7 @@ public class ListActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
-        setTitle("");
+
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if(user.getPhotoUrl() != null){
             BaseApplication.changeImage(user.getPhotoUrl());
@@ -91,20 +89,7 @@ public class ListActivity extends AppCompatActivity {
             }
         });
 
-        searchView = findViewById(R.id.search_location);
-        searchView.setFocusable(false);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String s) {
-                return false;
-            }
 
-            @Override
-            public boolean onQueryTextChange(String s) {
-                adapter.getFilter().filter(s);
-                return false;
-            }
-        });
 
         //using gps
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -113,8 +98,9 @@ public class ListActivity extends AppCompatActivity {
             @Override
             public void onLocationChanged(Location location) {
                 myLocation = new LatLng(location.getLatitude(),location.getLongitude());
-
-                mStop.clear();
+                mName.clear();
+                mDistance.clear();
+                mDescription.clear();
                 double[] dis = new double[StopDetailsList.STOPS.length];
                 int[] index = new int[dis.length];
                 HashMap map = new HashMap();
@@ -129,12 +115,14 @@ public class ListActivity extends AppCompatActivity {
                 }
 
                 for (int i = 0; i<index.length; i++){
-                    mStop.add(StopDetailsList.STOPS[index[i]]);
+
+                    mName.add(StopDetailsList.STOPS[index[i]].getName());
+                    mDescription.add(StopDetailsList.STOPS[index[i]].getDescription());
                     if (Math.round(dis[i])<=10){
-                        StopDetailsList.STOPS[index[i]].setDistance("<=10m");
+                        mDistance.add("<=10m");
                     }
                     else{
-                        StopDetailsList.STOPS[index[i]].setDistance(Math.round(dis[i])+"m");
+                        mDistance.add(Math.round(dis[i])+"m");
                     }
                 }
                 initRecyclerView();
@@ -167,36 +155,37 @@ public class ListActivity extends AppCompatActivity {
                 return;
             }
         }
-        locationManager.requestLocationUpdates("gps", 10000, 0, locationListener);
+        locationManager.requestLocationUpdates("gps", 5000, 0, locationListener);
     }
 
     private void initRecyclerView(){
         RecyclerView recyclerView = findViewById(R.id.recyclerView2);
-        adapter = new RecyclerViewAdapter(mStop, this);
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(mName,mDescription,mDistance,this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
-/*
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_search,menu);
-        MenuItem item = menu.findItem(R.id.menuSearch);
-        SearchView searchView = (SearchView)item.getActionView();
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String s) {
-                return false;
-            }
-            @Override
-            public boolean onQueryTextChange(String s) {
-                adapter.getFilter().filter(s);
-                return false;
-            }
-        });
-        return super.onCreateOptionsMenu(menu);
+
+
+
+
+
+    public int[] sortLocation(LatLng currentLocation){
+        double[] dis = new double[StopDetailsList.STOPS.length];
+        int[] index = new int[dis.length];
+        HashMap map = new HashMap();
+        for (int i = 0; i < dis.length; i++){
+            dis[i] = SphericalUtil.computeDistanceBetween(currentLocation, StopDetailsList.STOPS[i].getPosition());
+            map.put(dis[i], i);
+        }
+        Arrays.sort(dis); // 升序排列
+        // 查找原始下标
+        for (int i = 0; i < dis.length; i++) {
+            index[i] = (int) map.get(dis[i]);
+        }
+        return index;
     }
- */
+
+
 
 
 }

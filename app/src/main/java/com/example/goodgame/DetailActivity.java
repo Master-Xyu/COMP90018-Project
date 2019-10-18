@@ -17,7 +17,7 @@ public class DetailActivity extends AppCompatActivity {
     private Button postBtn;
     FirebaseAuth firebaseAuth;
 
-    protected void onCreat(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.details);
         postBtn = (Button)findViewById(R.id.action_add_post);
