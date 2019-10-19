@@ -42,23 +42,26 @@
         android:orientation="horizontal">
 
 
-        <Button
-            android:id="@+id/action_add_post"
-            android:layout_width="205dp"
-            android:layout_height="match_parent"
-            android:onClick="postOnClick"
-            android:layout_gravity="top|left"
-            android:text="Add Post"
-            android:title="Add Post" />
-
-
         <!--        <item-->
         <!--&lt;!&ndash;            android:id="@+id/action_add_post"&ndash;&gt;-->
         <!--            android:layout_width="match_parent"-->
         <!--            android:icon="@drawable/ic_add_white"-->
         <!--            android:title="Add Post"-->
         <!--            app:showAsAction="always" />-->
+        <Button
+            android:id="@+id/action_add_post"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|left"
+            android:onClick="postOnClick"
+            android:text="Add Post"
+            android:title="Add Post" />
     </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/postsRecyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="458dp" />
     　
 
 
