@@ -34,13 +34,15 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
         android:text="Try Again"
-        android:textAllCaps="false"/>
+        android:textAllCaps="false"
+        style="@android:style/Widget.Holo.Button"/>
     <Button
         android:id="@+id/backButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:text="Back to Map"
-        android:textAllCaps="false"/>
+        android:textAllCaps="false"
+        style="@android:style/Widget.Holo.Button"/>
 
 </LinearLayout>

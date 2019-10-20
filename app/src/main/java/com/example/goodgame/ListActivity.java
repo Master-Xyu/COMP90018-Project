@@ -126,8 +126,8 @@ public class ListActivity extends AppCompatActivity {
                     dis[i] = SphericalUtil.computeDistanceBetween(myLocation, StopDetailsList.STOPS[i].getPosition());
                     map.put(dis[i], i);
                 }
-                Arrays.sort(dis); // 升序排列
-                // 查找原始下标
+                Arrays.sort(dis); // Ascending order
+                // find original subscript
                 for (int i = 0; i < dis.length; i++) {
                     index[i] = (int) map.get(dis[i]);
                 }

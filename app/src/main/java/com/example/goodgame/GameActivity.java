@@ -24,7 +24,6 @@ public class GameActivity extends AppCompatActivity {
     private ImageView tram;
     private ImageView person_1;
     private ImageView person_2;
-    private ImageView person_3;
     private ImageView person_4;
     private ImageView bad_guy;
 
@@ -40,8 +39,6 @@ public class GameActivity extends AppCompatActivity {
     private int person_1Y;
     private int person_2X;
     private int person_2Y;
-    private int person_3X;
-    private int person_3Y;
     private int person_4X;
     private int person_4Y;
     private int bad_guyX;
@@ -49,12 +46,18 @@ public class GameActivity extends AppCompatActivity {
 
     private int score = 0;
 
-
+    //Speed
+    private int tramSpeed;
+    private int person1Speed;
+    private int person2Speed;
+    private int person3Speed;
+    private int bombSpeed;
 
 
     //Initialize Class
     private Handler handler = new Handler();
     private Timer timer = new Timer();
+    private SoundPlayer soundPlayer;
 
     //Status Check
     private boolean action_flag = false;
@@ -65,14 +68,15 @@ public class GameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
+        soundPlayer = new SoundPlayer(this);
+
         scoreLabel = (TextView)findViewById(R.id.scoreLabel);
         startLabel = (TextView)findViewById(R.id.startLabel);
         tram = (ImageView)findViewById(R.id.tram);
         person_1 = (ImageView)findViewById(R.id.person_1);
         person_2 = (ImageView)findViewById(R.id.person_2);
-        person_3 = (ImageView)findViewById(R.id.person_3);
         person_4 = (ImageView)findViewById(R.id.person_4);
-        bad_guy = (ImageView)findViewById(R.id.bad_guy);
+        bad_guy = (ImageView)findViewById(R.id.bomb);
 
         //Get screen size
         WindowManager wm = getWindowManager();
@@ -83,15 +87,17 @@ public class GameActivity extends AppCompatActivity {
         screenWidth = size.x;
         screenHeight = size.y;
 
-
+        tramSpeed = Math.round(screenHeight / 60F);
+        person1Speed = Math.round(screenWidth / 60F);
+        person2Speed = Math.round(screenWidth / 36F);
+        person3Speed = Math.round(screenWidth / 36F);
+        bombSpeed = Math.round(screenWidth / 45F);
 
         //Move to out of screen
         person_1.setX(-180);
         person_1.setY(-180);
         person_2.setX(-180);
         person_2.setY(-180);
-        person_3.setX(-180);
-        person_3.setY(-180);
         person_4.setX(-180);
         person_4.setY(-180);
         bad_guy.setX(-180);
@@ -107,7 +113,7 @@ public class GameActivity extends AppCompatActivity {
         hitCheck();
 
         //Person 1
-        person_1X -= 12;
+        person_1X -= person1Speed;
         if (person_1X < 0){
             person_1X = screenWidth + 20;
             person_1Y = (int) Math.floor(Math.random() * (frameHeight - person_1.getHeight()));
@@ -116,7 +122,7 @@ public class GameActivity extends AppCompatActivity {
         person_1.setY(person_1Y);
 
         //Person 2
-        person_2X -= 16;
+        person_2X -= person2Speed;
         if (person_2X < 0){
             person_2X = screenWidth + 15;
             person_2Y = (int) Math.floor(Math.random() * (frameHeight - person_2.getHeight()));
@@ -124,17 +130,10 @@ public class GameActivity extends AppCompatActivity {
         person_2.setX(person_2X);
         person_2.setY(person_2Y);
 
-        //Person 3
-        person_3X -= 20;
-        if (person_3X < 0){
-            person_3X = screenWidth + 5000;
-            person_3Y = (int) Math.floor(Math.random() * (frameHeight - person_3.getHeight()));
-        }
-        person_3.setX(person_3X);
-        person_3.setY(person_3Y);
+
 
         //Person 4
-        person_4X -= 24;
+        person_4X -= person3Speed;
         if (person_4X < 0){
             person_4X = screenWidth + 30;
             person_4Y = (int) Math.floor(Math.random() * (frameHeight - person_4.getHeight()));
@@ -142,8 +141,8 @@ public class GameActivity extends AppCompatActivity {
         person_4.setX(person_4X);
         person_4.setY(person_4Y);
 
-        //bad guy
-        bad_guyX -= 28;
+        //bomb
+        bad_guyX -= bombSpeed;
         if (bad_guyX < 0){
             bad_guyX = screenWidth + 10;
             bad_guyY = (int) Math.floor(Math.random() * (frameHeight - bad_guy.getHeight()));
@@ -161,11 +160,23 @@ public class GameActivity extends AppCompatActivity {
             tramY += 20;
         }
 
-        //check tram position
-        if (tramY < 0) tramY = 0;
-        if (tramY > frameHeight - tramHeight) tramY = frameHeight - tramHeight;
-        tram.setY(tramY);
         scoreLabel.setText("Score : "+ score);
+
+        //check tram position
+        if (tramY < 0) {
+            tramY = 0;
+
+        }
+        if (tramY > frameHeight - tramHeight) {
+            tramY = frameHeight - tramHeight;
+            stopGame();
+        }
+
+        tram.setY(tramY);
+
+
+
+
     }
 
     public void hitCheck() {
@@ -180,6 +191,7 @@ public class GameActivity extends AppCompatActivity {
                 tramY <= person1CenterY && person1CenterY <= tramY + tramHeight ){
             score += 10;
             person_1X = -10;
+            soundPlayer.playHitSound();
         }
 
         //Person 2
@@ -190,17 +202,9 @@ public class GameActivity extends AppCompatActivity {
                 tramY <= person2CenterY && person2CenterY <= tramY + tramHeight ){
             score += 10;
             person_2X = -10;
+            soundPlayer.playHitSound();
         }
 
-        //Person 3
-        int person3CenterX = person_3X + person_3.getWidth() / 2;
-        int person3CenterY = person_3Y + person_3.getHeight() / 2;
-
-        if (0 <= person3CenterX && person3CenterX <= tramHeight &&
-                tramY <= person3CenterY && person3CenterY <= tramY + tramHeight ){
-            score += 20;
-            person_3X = -10;
-        }
 
 
         //Person 4
@@ -211,6 +215,7 @@ public class GameActivity extends AppCompatActivity {
                 tramY <= person4CenterY && person4CenterY <= tramY + tramHeight ){
             score += 20;
             person_4X = -10;
+            soundPlayer.playHitSound();
         }
 
         //bad guy
@@ -219,16 +224,23 @@ public class GameActivity extends AppCompatActivity {
 
         if (0 <= badCenterX && badCenterX <= tramHeight &&
                 tramY <= badCenterY && badCenterY <= tramY + tramHeight ){
+            stopGame();
 
-            //Stop Timer
-            timer.cancel();
-            timer = null;
-
-            //Show result
-            Intent intent = new Intent(GameActivity.this, GameResult.class);
-            intent.putExtra("SCORE", score);
-            startActivity(intent);
         }
+
+     }
+
+     public void stopGame(){
+         //Stop Timer
+         timer.cancel();
+         timer = null;
+
+         soundPlayer.playOverSound();
+
+         //Show result
+         Intent intent = new Intent(GameActivity.this, GameResult.class);
+         intent.putExtra("SCORE", score);
+         startActivity(intent);
      }
 
     public boolean onTouchEvent(MotionEvent me){
