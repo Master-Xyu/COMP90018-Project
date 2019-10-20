@@ -56,13 +56,15 @@
             android:layout_height="wrap_content"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:text="Title"/>
+            android:text="Title"
+            android:autoLink="all"/>
         <TextView
             android:id="@+id/pDescriptionTV"
             android:text="The description of the post"
             android:textColor="@color/cardview_dark_background"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:autoLink="all"/>
         <ImageView
             android:id="@+id/pImageIv"
             android:layout_width="match_parent"
@@ -76,7 +78,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
-        <view
+        <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="#F5F0F0"/>

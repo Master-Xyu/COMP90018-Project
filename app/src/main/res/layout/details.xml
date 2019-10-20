@@ -58,10 +58,18 @@
             android:title="Add Post" />
     </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/postsRecyclerview"
+    <FrameLayout
+
+        android:id="@+id/detail_fragment"
         android:layout_width="match_parent"
-        android:layout_height="458dp" />
+        android:layout_height="match_parent">
+
+    </FrameLayout>
+
+    <!--    <androidx.recyclerview.widget.RecyclerView-->
+<!--        android:id="@+id/postsRecyclerview"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="458dp" />-->
     　
 
 

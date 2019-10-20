@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.goodgame.R;
 import com.example.goodgame.models.ModelPost;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 
@@ -29,6 +30,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder>{
     Context context;
     List<ModelPost> postList;
 
+
     public AdapterPost(Context context, List<ModelPost> postList) {
         this.context = context;
         this.postList = postList;
@@ -39,7 +41,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder>{
     public MyHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         //inflate layout row_post.xml
-        View view= LayoutInflater.from(context).inflate(R.layout.row_posts,parent,false);
+        View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.row_posts,parent,false);
         return new MyHolder(view);
     }
 
@@ -77,12 +79,21 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder>{
 //       }
 
        //set post image
-        try{
-            Picasso.get().load(pImage).into(holder.pImageIv);
-        }
-        catch (Exception e){
+        if (pImage.equals("noImage")){
+            holder.pImageIv.setVisibility(View.GONE);
+
+
 
         }
+        else{
+            try{
+                Picasso.get().load(pImage).into(holder.pImageIv);
+            }
+            catch (Exception e){
+
+            }
+        }
+
         //handle button click
 
         holder.moreBtn.setOnClickListener(new View.OnClickListener() {
