@@ -69,6 +69,7 @@ public class UserProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
+                BaseApplication.changeImage(R.drawable.default_avatar);
                 FirebaseAuth.getInstance().signOut();
                 Intent intent = new Intent(UserProfileActivity.this, EmailPasswordActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);

@@ -115,4 +115,7 @@ public class BaseApplication extends Application {
         Glide.with(BaseContext).load(uri).error(R.drawable.default_avatar).into(imageView_);
     }
 
+    public static void changeImage(int resId){
+        imageView_.setImageResource(resId);
+    }
 }
