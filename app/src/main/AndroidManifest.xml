@@ -11,6 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:label">
+        <activity android:name=".PostDetialActivity"></activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -45,8 +46,9 @@
         <activity
             android:name=".GameResult"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity android:name=".StartGameActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+        <activity
+            android:name=".StartGameActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity android:name=".BaseActivity" />
         <activity android:name=".DetailActivity" />
         <activity
@@ -63,8 +65,7 @@
         <activity
             android:name=".ProfileCommentActivity"
             android:label="@string/title_activity_profile_comment" />
-
-        <activity android:name=".ProfileNameChangeActivity"/>
+        <activity android:name=".ProfileNameChangeActivity" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -77,14 +78,14 @@
             android:name="org.apache.http.legacy"
             android:required="false" />
     </application>
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
 </manifest>

@@ -3,18 +3,19 @@ package com.example.goodgame.models;
 public class ModelPost {
     //use same name as we given while uploading post
 
-    String pId,pTitle,pDescr,pImage,pLikes,pTime,uid,uEmail,uDp,uName;
+    String pId,pTitle,pDescr,pImage,pLikes,pComments,pTime,uid,uEmail,uDp,uName;
 
     public ModelPost() {
 
     }
 
-    public ModelPost(String pId, String pTitle, String pDescr, String pImage, String pLikes, String pTime, String uid, String uEmail, String uDp, String uName) {
+    public ModelPost(String pId, String pTitle, String pDescr, String pImage, String pLikes, String pComments, String pTime, String uid, String uEmail, String uDp, String uName) {
         this.pId = pId;
         this.pTitle = pTitle;
         this.pDescr = pDescr;
         this.pImage = pImage;
         this.pLikes = pLikes;
+        this.pComments = pComments;
         this.pTime = pTime;
         this.uid = uid;
         this.uEmail = uEmail;
@@ -60,6 +61,14 @@ public class ModelPost {
 
     public void setpLikes(String pLikes) {
         this.pLikes = pLikes;
+    }
+
+    public String getpComments() {
+        return pComments;
+    }
+
+    public void setpComments(String pComments) {
+        this.pComments = pComments;
     }
 
     public String getpTime() {

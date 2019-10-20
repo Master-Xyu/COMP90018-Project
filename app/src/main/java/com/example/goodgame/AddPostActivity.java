@@ -192,6 +192,7 @@ public class  AddPostActivity extends AppCompatActivity {
                                 hashMap.put("pImage",downloadUri);
                                 hashMap.put("pTime",timeStamp);
                                 hashMap.put("pLikes", "0");
+                                hashMap.put("pComments","0");
 
                                 //path to storage post data
                                 DatabaseReference ref =FirebaseDatabase.getInstance().getReference("Posts");
@@ -247,6 +248,7 @@ public class  AddPostActivity extends AppCompatActivity {
             hashMap.put("pImage","noImage");
             hashMap.put("pTime",timeStamp);
             hashMap.put("pLikes", "0");
+            hashMap.put("pComments","0");
 
             //path to storage post data
             DatabaseReference ref =FirebaseDatabase.getInstance().getReference("Posts");

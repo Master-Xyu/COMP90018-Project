@@ -1,6 +1,7 @@
 package com.example.goodgame.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.goodgame.PostDetialActivity;
 import com.example.goodgame.R;
 import com.example.goodgame.models.ModelPost;
 import com.google.firebase.auth.FirebaseAuth;
@@ -76,6 +78,8 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder>{
         String pTimeStamp=postList.get(position).getpTime();
         String pLikes=postList.get(position).getpLikes();//cotains total number of likes for a post
 
+        String pComments=postList.get(position).getpComments();
+
         //convert timestamp to dd/mm/yyy hh:mm am/pm
         Calendar calendar=Calendar.getInstance(Locale.getDefault());
         calendar.setTimeInMillis(Long.parseLong(pTimeStamp));
@@ -87,6 +91,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder>{
         holder.pTitleTv.setText(pTitle);
         holder.pDescriptionTV.setText(pDescription);
         holder.pLikesTv.setText(pLikes+" Likes");
+        holder.pCommentsTv.setText(pComments+" Comments");
         //set likes for each post
         setLikes(holder,pId);
 
@@ -106,6 +111,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder>{
 
         }
         else{
+            holder.pImageIv.setVisibility(View.VISIBLE);
             try{
                 Picasso.get().load(pImage).into(holder.pImageIv);
             }
@@ -130,10 +136,10 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder>{
             public void onClick(View view) {
                 //will implement later
 //                Toast.makeText(context,"Like",Toast.LENGTH_SHORT).show();
-                int pLikes=Integer.parseInt(postList.get(position).getpLikes());
+                final int pLikes=Integer.parseInt(postList.get(position).getpLikes());
                 mProcessLike=true;
                 //get id of post clicked
-                String postIde=postList.get(position).getpId();
+               final String postIde=postList.get(position).getpId();
                 likesRef.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -170,7 +176,13 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder>{
             @Override
             public void onClick(View view) {
                 //will implement later
-                Toast.makeText(context,"Comment",Toast.LENGTH_SHORT).show();
+//                Toast.makeText(context,"Comment",Toast.LENGTH_SHORT).show();
+
+                //start PostDetailAct
+                Intent intent=new Intent(context, PostDetialActivity.class);
+                intent.putExtra("postId",pId);//will get detail of post using this id, its id of the post clicked
+                context.startActivity(intent);
+
 
             }
         });
@@ -224,7 +236,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder>{
 
         //views from row_posts.xml
           ImageView uPictureIv,pImageIv;
-          TextView uNameTv,pTimeTv,pTitleTv,pDescriptionTV,pLikesTv;
+          TextView uNameTv,pTimeTv,pTitleTv,pDescriptionTV,pLikesTv,pCommentsTv;
           ImageButton moreBtn;
           Button likeBtn,commentBtn,shareBtn;
 
@@ -241,6 +253,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder>{
              pTitleTv=itemView.findViewById(R.id.pTitleTv);
              pDescriptionTV=itemView.findViewById(R.id.pDescriptionTV);
              pLikesTv=itemView.findViewById(R.id.pLikesTv);
+             pCommentsTv=itemView.findViewById(R.id.pCommentsTv);
              moreBtn=itemView.findViewById(R.id.moreBtn);
              likeBtn=itemView.findViewById(R.id.likeBtn);
              commentBtn=itemView.findViewById(R.id.commentBtn);
