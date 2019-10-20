@@ -74,10 +74,9 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
         }
 
         private void showNormalDialog(){
-            /* @setIcon 设置对话框图标
-             * @setTitle 设置对话框标题
-             * @setMessage 设置对话框消息提示
-             * setXXX方法返回Dialog对象，因此可以链式设置属性
+            /* @setIcon Set dialog icon
+             * @setTitle Set dialog title
+             * @setMessage Set dialog message prompt
              */
             final AlertDialog.Builder normalDialog =
                     new AlertDialog.Builder(mContext);
@@ -97,7 +96,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
                             //...To-do
                         }
                     });
-            // 显示
+            // Show
             normalDialog.show();
         }
 
