@@ -59,10 +59,12 @@
             android:launchMode="standard"
             android:windowSoftInputMode="stateHidden|stateAlwaysHidden" />
         <activity android:name=".Photo.ResultActivity" />
-        <activity android:name=".Photo.SimpleActivity" />
+        <activity android:name=".Photo.TakeProfilePhotoActivity" />
         <activity
             android:name=".ProfileCommentActivity"
             android:label="@string/title_activity_profile_comment" />
+
+        <activity android:name=".ProfileNameChangeActivity"/>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
