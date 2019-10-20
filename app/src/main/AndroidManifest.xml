@@ -3,11 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.goodgame">
 
-    <!--
-         The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
-         Google Maps Android API v2, but you must specify either coarse or fine
-         location permissions for the 'MyLocation' functionality.
-    -->
     <application
         android:name=".BaseApplication"
         android:allowBackup="true"
@@ -16,7 +11,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:label">
-
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -27,8 +21,8 @@
         -->
         <activity
             android:name=".MapActivity"
-            android:label="@string/title_activity_map" android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
-
+            android:label="@string/title_activity_map"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity android:name=".AddPostActivity" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -45,11 +39,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        <activity
+            android:name=".GameActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".GameResult"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity android:name=".StartGameActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
         <activity android:name=".BaseActivity" />
         <activity android:name=".DetailActivity" />
-        <activity android:name=".ListActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+        <activity
+            android:name=".ListActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity android:name=".UserProfileActivity" />
         <activity
             android:name=".Float.FloatActivity"
@@ -61,10 +63,10 @@
         <activity
             android:name=".ProfileCommentActivity"
             android:label="@string/title_activity_profile_comment" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCSuFxOR5Ioi-ECWLyrVTSGb5aWd-jv1e4" />
-
         <meta-data
             android:name="com.google.android.actions"
             android:resource="@drawable/editextstyle" />
@@ -73,19 +75,14 @@
             android:name="org.apache.http.legacy"
             android:required="false" />
     </application>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
-
-
-
-
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
 </manifest>

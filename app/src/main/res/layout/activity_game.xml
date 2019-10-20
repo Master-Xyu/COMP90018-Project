@@ -30,8 +30,8 @@
 
         <ImageView
             android:id="@+id/tram"
-            android:layout_width="80dp"
-            android:layout_height="45dp"
+            android:layout_width="130dp"
+            android:layout_height="80dp"
             android:layout_gravity="center_vertical"
             app:srcCompat="@drawable/tram" />
         <ImageView
@@ -45,20 +45,14 @@
             android:layout_height="50dp"
             app:srcCompat="@drawable/man"/>
         <ImageView
-            android:id="@+id/person_3"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            app:srcCompat="@drawable/uncle"/>
-        <ImageView
             android:id="@+id/person_4"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             app:srcCompat="@drawable/aunt"/>
         <ImageView
-            android:id="@+id/bad_guy"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            app:srcCompat="@drawable/thief"
-            android:background="#000"/>
+            android:id="@+id/bomb"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            app:srcCompat="@drawable/bomb" />
     </FrameLayout>
 </LinearLayout>

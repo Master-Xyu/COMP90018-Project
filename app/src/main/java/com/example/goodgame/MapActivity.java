@@ -22,6 +22,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -116,14 +117,18 @@ public class MapActivity extends AppCompatActivity implements
                 startActivity(intent3);
             }
         });
+
+
         Button btnGame = (Button) findViewById(R.id.gamebtn);
         btnGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MapActivity.this, GameActivity.class);
+                Intent intent = new Intent(MapActivity.this, StartGameActivity.class);
                 startActivity(intent);
             }
         });
+
+
 
 
 
@@ -156,6 +161,7 @@ public class MapActivity extends AppCompatActivity implements
                     if(mMarker.get(j).getTitle().equals(location)){
                         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mMarker.get(j).getPosition(),15));
                         markerBounce(mMarker.get(j));
+                        closeKeyboard();
                     }
                 }
             }
@@ -166,10 +172,13 @@ public class MapActivity extends AppCompatActivity implements
             @Override
             public void onClick(View view) {
                 mSearchText.setText("");
+                closeKeyboard();
             }
         });
 
+
  */
+
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         locationListener = new LocationListener() {

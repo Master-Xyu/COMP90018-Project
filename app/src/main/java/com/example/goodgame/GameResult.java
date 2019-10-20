@@ -55,5 +55,8 @@ public class GameResult extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+
+
     }
 }
