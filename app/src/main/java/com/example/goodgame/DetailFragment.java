@@ -117,7 +117,6 @@ public class DetailFragment extends Fragment {
                 for (DataSnapshot ds:dataSnapshot.getChildren()){
                     ModelPost modelPost=ds.getValue(ModelPost.class);
                     postList.add(modelPost);
-
                     //adapter
                     adapterPost=new AdapterPost(getActivity(),postList);
                     //set adapter to recyclerview
