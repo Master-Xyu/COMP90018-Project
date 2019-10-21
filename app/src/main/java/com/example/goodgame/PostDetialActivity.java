@@ -3,12 +3,15 @@ package com.example.goodgame;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,6 +20,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.goodgame.adapters.AdapterComments;
+import com.example.goodgame.models.ModelComment;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,8 +34,10 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
 public class PostDetialActivity extends AppCompatActivity {
@@ -49,6 +56,12 @@ public class PostDetialActivity extends AppCompatActivity {
     TextView uNameTv,pTimeTiv,pTitleTv,pDescriptionTv,pLikesTv,pCommentsTv;
     ImageButton moreBtn;
     Button likeBtn,shareBtn;
+    RecyclerView recyclerView;
+
+
+    List<ModelComment> commentList;
+    AdapterComments adapterComments;
+
 
     //add comments views
     EditText commentEt;
@@ -87,6 +100,7 @@ public class PostDetialActivity extends AppCompatActivity {
         moreBtn=findViewById(R.id.moreBtn);
         likeBtn=findViewById(R.id.likeBtn);
         shareBtn=findViewById(R.id.shareBtn);
+        recyclerView=findViewById(R.id.recyclerView);
 
         commentEt=findViewById(R.id.commentEt);
         sendBtn=findViewById(R.id.sendBtn);
@@ -105,6 +119,9 @@ public class PostDetialActivity extends AppCompatActivity {
         //set subtitle of actionbar
         actionBar.setSubtitle("SignedIn as:"+ myEmail);
         
+        loadComments();
+        
+        
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -120,6 +137,53 @@ public class PostDetialActivity extends AppCompatActivity {
                 likePost();
             }
         });
+
+
+
+    }
+
+    private void loadComments() {
+        //layout(linear) for recyclerview
+        LinearLayoutManager layoutManager=new LinearLayoutManager(getApplicationContext());
+        // set layout to recyclerview
+        recyclerView.setLayoutManager(layoutManager);
+
+        //init comment list
+        commentList=new ArrayList<>();
+
+        //path of the post, to get the comments
+        DatabaseReference ref=FirebaseDatabase.getInstance().getReference("Posts").child(postId).child("Comments");
+
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                commentList.clear();
+                for(DataSnapshot ds: dataSnapshot.getChildren()){
+                    ModelComment modelComment=ds.getValue(ModelComment.class);
+                    commentList.add(modelComment);
+
+                    //setup adapter
+                    adapterComments=new AdapterComments(getApplicationContext(),commentList);
+                    //set adapter
+                    recyclerView.setAdapter(adapterComments);
+
+
+
+
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+
+
 
 
 
