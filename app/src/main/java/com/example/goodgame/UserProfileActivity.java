@@ -147,6 +147,7 @@ public class UserProfileActivity extends AppCompatActivity {
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         UserProfileChangeRequest profileUpdates = null;
         switch (requestCode){
             case 1:

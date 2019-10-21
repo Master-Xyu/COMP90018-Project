@@ -30,22 +30,32 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.ArrayList;
+
 /**
  * Provide views to RecyclerView with data from mDataSet.
  */
 public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder> {
     private static final String TAG = "CustomAdapter";
 
-    private String[] mDataSet;
-
+    private static ArrayList<String> mDataSet;
+    private static ArrayList<Integer> mDataType;
+    private static ArrayList<String> mDataID;
+    private static String UID;
     private static FragmentActivity mContext;
     // BEGIN_INCLUDE(recyclerViewSampleViewHolder)
     /**
      * Provide a reference to the type of views that you are using (custom ViewHolder)
      */
     public static class ViewHolder extends RecyclerView.ViewHolder {
+        CustomAdapter adapter;
         private final TextView textView;
         private final Button button;
+        private int position;
         public ViewHolder(View v) {
             super(v);
             // Define click listener for the ViewHolder's View.
@@ -64,7 +74,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    showNormalDialog();
+                    showNormalDialog(position);
                 }
             });
         }
@@ -73,7 +83,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             return textView;
         }
 
-        private void showNormalDialog(){
+        private void showNormalDialog(int position){
             /* @setIcon Set dialog icon
              * @setTitle Set dialog title
              * @setMessage Set dialog message prompt
@@ -86,20 +96,39 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            //...To-do
+                            DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("Posts");
+                            if(mDataType.get(position) == 1){
+                                mDatabase.child(mDataID.get(position)).removeValue();
+                            }else{
+                                String[] ids = mDataID.get(position).split(" ");
+                                mDatabase.child(ids[0]).child("Comments").child(ids[1]).removeValue();
+                            }
+                            mDataType.remove(position);
+                            mDataID.remove(position);
+                            mDataSet.remove(position);
+                            //RecyclerViewFragment.removeCommentAt(position);
+                            adapter.notifyItemRemoved(getAdapterPosition());
+                            adapter.notifyItemRangeChanged(getAdapterPosition(),mDataSet.size());
+                            adapter.notifyDataSetChanged();
                         }
                     });
             normalDialog.setNegativeButton("Cancel",
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            //...To-do
+                            dialog.dismiss();
                         }
                     });
             // Show
             normalDialog.show();
         }
 
+        public void setPosition(int position){
+            this.position = position;
+        }
+        public void setAdapter(CustomAdapter adapter){
+            this.adapter = adapter;
+        }
     }
     // END_INCLUDE(recyclerViewSampleViewHolder)
 
@@ -111,8 +140,11 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
      *
      * @param dataSet String[] containing the data to populate views to be used by RecyclerView.
      */
-    public CustomAdapter(String[] dataSet) {
+    public CustomAdapter(ArrayList<String> dataSet, ArrayList<Integer> dataType, ArrayList<String> dataID) {
         mDataSet = dataSet;
+        mDataID = dataID;
+        mDataType = dataType;
+        UID = FirebaseAuth.getInstance().getUid();
     }
 
     // BEGIN_INCLUDE(recyclerViewOnCreateViewHolder)
@@ -135,13 +167,16 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
         // Get element from your dataset at this position and replace the contents of the view
         // with that element
-        viewHolder.getTextView().setText(mDataSet[position]);
+        viewHolder.getTextView().setText(mDataSet.get(position));
+        viewHolder.setPosition(position);
+        viewHolder.setAdapter(this);
     }
     // END_INCLUDE(recyclerViewOnBindViewHolder)
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return mDataSet.length;
+        return mDataSet.size();
     }
+
 }
