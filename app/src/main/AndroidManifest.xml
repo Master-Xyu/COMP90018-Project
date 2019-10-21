@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.goodgame"
-    tools:replace="android:appComponentFactory,android:icon"
-    android:appComponentFactory="someString">
+    package="com.example.goodgame">
 
     <application
         android:name=".BaseApplication"
@@ -15,16 +13,16 @@
         tools:replace="android:label"
         tools:ignore="GoogleAppIndexingWarning">
 
-        <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="com.example.goodgame.fileprovider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/paths" />
+<!--        <provider-->
+<!--            android:name="androidx.core.content.FileProvider"-->
+<!--            android:authorities="com.example.goodgame.fileprovider"-->
+<!--            android:exported="false"-->
+<!--            android:grantUriPermissions="true">-->
+<!--            <meta-data-->
+<!--                android:name="android.support.FILE_PROVIDER_PATHS"-->
+<!--                android:resource="@xml/paths" />-->
 
-        </provider>
+<!--        </provider>-->
 
         <activity android:name=".PostDetialActivity"></activity>
         <!--
