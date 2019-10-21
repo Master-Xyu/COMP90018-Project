@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.goodgame">
+    package="com.example.goodgame"
+    tools:replace="android:appComponentFactory,android:icon"
+    android:appComponentFactory="someString">
 
     <application
         android:name=".BaseApplication"
@@ -10,7 +12,20 @@
         android:label="Tram Map"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:replace="android:label">
+        tools:replace="android:label"
+        tools:ignore="GoogleAppIndexingWarning">
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.example.goodgame.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/paths" />
+
+        </provider>
+
         <activity android:name=".PostDetialActivity"></activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -77,6 +92,13 @@
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
+
+
+<!--        define file provider-->
+
+
+
+
     </application>
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
