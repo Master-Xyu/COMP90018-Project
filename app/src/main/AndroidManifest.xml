@@ -73,7 +73,6 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="standard"
             android:windowSoftInputMode="stateHidden|stateAlwaysHidden" />
-        <activity android:name=".Photo.ResultActivity" />
         <activity android:name=".Photo.TakeProfilePhotoActivity" />
         <activity
             android:name=".ProfileCommentActivity"

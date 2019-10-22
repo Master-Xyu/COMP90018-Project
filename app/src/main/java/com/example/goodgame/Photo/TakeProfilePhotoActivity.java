@@ -23,7 +23,6 @@ import com.jph.takephoto.model.TakePhotoOptions;
 import java.io.File;
 
 public class TakeProfilePhotoActivity extends TakePhotoActivity {
-    private CustomHelper customHelper;
     private CropOptions.Builder cropBuilder_;
     private TakePhotoOptions.Builder takeBuilder_;
     private TakePhoto takePhoto_;
@@ -53,10 +52,6 @@ public class TakeProfilePhotoActivity extends TakePhotoActivity {
                 takePhoto_.onPickFromCaptureWithCrop(imageUri_,cropBuilder_.create());
                 Log.d("take photo","end!");
         }
-    }
-
-    public void onClick(View view) {
-        customHelper.onClick(view,getTakePhoto());
     }
 
     @Override
