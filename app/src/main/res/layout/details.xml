@@ -40,20 +40,20 @@
 
         <Button
             android:id="@+id/action_add_post"
-            android:layout_width="wrap_content"
+            style="@android:style/Widget.Holo.Button"
+            android:layout_width="205dp"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|left"
             android:onClick="postOnClick"
-            style="@android:style/Widget.Holo.Button"
             android:text="Add Post"
             android:title="Add Post" />
 
         <Button
             android:id="@+id/action_alert"
-            android:layout_width="101dp"
+            style="@style/SignoutButton"
+            android:layout_width="205dp"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|right"
-            style="@style/SignoutButton"
             android:text="Alert"
             android:title="Alert" />
 
