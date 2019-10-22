@@ -1,12 +1,5 @@
 package com.example.goodgame;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.FileProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -15,7 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,6 +15,13 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.goodgame.adapters.AdapterComments;
 import com.example.goodgame.models.ModelComment;
@@ -158,10 +157,11 @@ public class PostDetialActivity extends AppCompatActivity {
                 }
                 else {
                     //post with image
+                    shareTextOnly(pTitle,pDescription);
 
-                    //convert image into bitmap
-                    Bitmap bitmap=bitmapDrawable.getBitmap();
-                    shareImageAndText(pTitle,pDescription,bitmap);
+//                    //convert image into bitmap
+//                    Bitmap bitmap=bitmapDrawable.getBitmap();
+//                    shareImageAndText(pTitle,pDescription,bitmap);
 
 
 
@@ -205,12 +205,16 @@ public class PostDetialActivity extends AppCompatActivity {
 
         //share intent
         Intent sIntent= new Intent(Intent.ACTION_SEND);
+        sIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         sIntent.putExtra(Intent.EXTRA_STREAM,uri);
         sIntent.putExtra(Intent.EXTRA_TEXT,shareBody);//text to share
         sIntent.putExtra(Intent.EXTRA_SUBJECT,"Subject Here");//share via email
 
         sIntent.setType("image/png");
-      startActivity(Intent.createChooser(sIntent,"Share Via"));
+//        context.startActivity(Intent.createChooser(sIntent,"Share Via"));
+
+//        sIntent.setType("image/png");
+        startActivity(Intent.createChooser(sIntent,"Share Via"));
 
 
 
@@ -228,10 +232,8 @@ public class PostDetialActivity extends AppCompatActivity {
             bitmap.compress(Bitmap.CompressFormat.PNG,90,stream);
             stream.flush();
             stream.close();
-            uri= FileProvider.getUriForFile(this,"com.example.goodgame.fileprovider"
+            uri= FileProvider.getUriForFile(this,getApplicationContext().getPackageName()+ ".fileprovider"
                     ,file);
-
-
 
 
 

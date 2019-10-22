@@ -23,6 +23,15 @@
 <!--                android:resource="@xml/paths" />-->
 
 <!--        </provider>-->
+        <provider
+            android:name=".GenericFileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/paths"/>
+        </provider>
 
         <activity android:name=".PostDetialActivity"></activity>
         <!--

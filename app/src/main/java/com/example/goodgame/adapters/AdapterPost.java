@@ -200,10 +200,11 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder>{
                 }
                 else {
                     //post with image
+                    shareTextOnly(pTitle,pDescription);
 
                     //convert image into bitmap
-                    Bitmap bitmap=bitmapDrawable.getBitmap();
-                    shareImageAndText(pTitle,pDescription,bitmap);
+//                    Bitmap bitmap=bitmapDrawable.getBitmap();
+//                    shareImageAndText(pTitle,pDescription,bitmap);
 
 
 
@@ -246,11 +247,16 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder>{
 
         //share intent
         Intent sIntent= new Intent(Intent.ACTION_SEND);
+        sIntent.setAction(Intent.ACTION_VIEW);
         sIntent.putExtra(Intent.EXTRA_STREAM,uri);
+        sIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         sIntent.putExtra(Intent.EXTRA_TEXT,shareBody);//text to share
         sIntent.putExtra(Intent.EXTRA_SUBJECT,"Subject Here");//share via email
 
         sIntent.setType("image/png");
+//        context.startActivity(Intent.createChooser(sIntent,"Share Via"));
+
+//        sIntent.setType("image/png");
         context.startActivity(Intent.createChooser(sIntent,"Share Via"));
 
 
@@ -269,10 +275,8 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder>{
             bitmap.compress(Bitmap.CompressFormat.PNG,90,stream);
             stream.flush();
             stream.close();
-            uri=FileProvider.getUriForFile(context,"com.example.goodgame.fileprovider"
+            uri= FileProvider.getUriForFile(context,context.getApplicationContext().getPackageName()+ ".fileprovider"
                     ,file);
-
-
 
 
 
