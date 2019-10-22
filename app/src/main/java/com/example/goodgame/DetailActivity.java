@@ -35,13 +35,17 @@ public class DetailActivity extends AppCompatActivity{
 
     private Button postBtn;
     FirebaseAuth firebaseAuth;
+    private String stopID;
 
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.details);
+        stopID = getIntent().getStringExtra("stopID");
+
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        DetailFragment fragment= new DetailFragment();
+        //DetailFragment fragment= new DetailFragment();
+        DetailFragment fragment= new DetailFragment(stopID);
 //        Intent intent = new Intent(DetailActivity.this,DetailFragment.class);
 //        startActivity(intent);
         transaction.replace(R.id.detail_fragment, fragment);
@@ -165,6 +169,7 @@ public class DetailActivity extends AppCompatActivity{
 
     private void openPostActivity() {
         Intent intent =new Intent(this,AddPostActivity.class);
+        intent.putExtra("stopID",stopID);
         startActivity(intent);
 
     }

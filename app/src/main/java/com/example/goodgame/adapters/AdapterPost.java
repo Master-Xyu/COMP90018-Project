@@ -129,15 +129,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder>{
 
         //handle button click
 
-        holder.moreBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //will implement later
-////                Toast.makeText(context,"More",Toast.LENGTH_SHORT).show();
-//                showMoreOptions(holder.moreBtn,uid,myUid,pId,pImage);
 
-            }
-        });
         holder.likeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

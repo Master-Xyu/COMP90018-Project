@@ -39,6 +39,8 @@ public class DetailFragment extends Fragment {
     List<ModelPost> postList;
     AdapterPost adapterPost;
 
+    private String stopID;
+
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -47,6 +49,10 @@ public class DetailFragment extends Fragment {
 
     public DetailFragment() {
         // Required empty public constructor
+    }
+
+    public DetailFragment(String stopID) {
+        this.stopID = stopID;
     }
 
     /**
@@ -99,10 +105,6 @@ public class DetailFragment extends Fragment {
         postList= new ArrayList<>();
         loadPosts();
 
-
-
-
-
         return view;
     }
 
@@ -116,12 +118,27 @@ public class DetailFragment extends Fragment {
                 postList.clear();
                 for (DataSnapshot ds:dataSnapshot.getChildren()){
                     ModelPost modelPost=ds.getValue(ModelPost.class);
+                    /*
                     postList.add(modelPost);
                     //adapter
                     adapterPost=new AdapterPost(getActivity(),postList);
                     //set adapter to recyclerview
                     recyclerView.setAdapter(adapterPost);
 
+                     */
+                    System.out.println("**********************");
+                    System.out.println("**********************");
+                    System.out.println(stopID);
+                    System.out.println("**********************");
+                    System.out.println("**********************");
+                    if (modelPost.getStopId().equals(stopID)){
+                        postList.add(modelPost);
+
+                    }
+                    //adapter
+                    adapterPost=new AdapterPost(getActivity(),postList);
+                    //set adapter to recyclerview
+                    recyclerView.setAdapter(adapterPost);
 
                 }
 
