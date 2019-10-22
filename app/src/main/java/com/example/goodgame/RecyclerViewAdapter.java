@@ -50,8 +50,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                String stopID = String.valueOf(mStop.get(position).getId());
                 Intent intent = new Intent(mContext, DetailActivity.class);
-                intent.putExtra("stopID",mStop.get(position).getId());
+                intent.putExtra("stopID",stopID);
                 mContext.startActivity(intent);
             }
         });

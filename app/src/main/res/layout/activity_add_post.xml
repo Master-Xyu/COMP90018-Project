@@ -19,15 +19,9 @@
             android:hint="Enter title"
             android:singleLine="true"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            />
+            android:layout_height="wrap_content" />
 
-        <ImageView
-            android:id="@+id/pImageIv"
-            android:background="@color/colorPrimary"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="200dp"/>
+
 
         <EditText
             android:id="@+id/pDescriptionEt"
@@ -38,9 +32,22 @@
             android:minHeight="120dp"
             android:gravity="start"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            />
+            android:layout_height="wrap_content" />
 
+        <ImageView
+            android:id="@+id/pImageIv"
+            android:background="@color/colorPrimary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="200dp"
+            android:visibility="gone"/>
+        <Button
+            android:id="@+id/addImage"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:text="Add Image"
+            android:layout_gravity="end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
         <Button
             android:id="@+id/pUploadBtn"
             style="@style/Widget.AppCompat.Button.Colored"

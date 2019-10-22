@@ -369,9 +369,10 @@ public class MapActivity extends AppCompatActivity implements
 
     @Override
     public void onInfoWindowClick(Marker marker) {
-        Toast.makeText(this, "Click Info Window", Toast.LENGTH_SHORT).show();
+        String stopID = marker.getSnippet().split(" ")[1];
+
         Intent intent = new Intent(MapActivity.this, DetailActivity.class);
-        intent.putExtra("stopID",marker.getId()+1);
+        intent.putExtra("stopID",stopID);
         startActivity(intent);
     }
 
@@ -382,7 +383,7 @@ public class MapActivity extends AppCompatActivity implements
 
     @Override
     public void onInfoWindowLongClick(Marker marker) {
-        Toast.makeText(this, "Info Window long click", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "Info Window long click", Toast.LENGTH_SHORT).show();
     }
 
     private void closeKeyboard(){

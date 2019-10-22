@@ -46,7 +46,7 @@ import java.util.HashMap;
 //import android.app.Activity;
 
 
-public class  AddPostActivity extends AppCompatActivity {
+public class AddPostActivity extends AppCompatActivity {
 
     ActionBar actionBar;
     FirebaseAuth firebaseAuth;
@@ -66,7 +66,7 @@ public class  AddPostActivity extends AppCompatActivity {
     //Views
     EditText  titleEt,descriptionEt;
     ImageView imageIv;
-    Button uploadBtn;
+    Button uploadBtn,addImageBtn;
 
     Uri image_rui=null;
 
@@ -74,11 +74,13 @@ public class  AddPostActivity extends AppCompatActivity {
     ProgressDialog pd;
 
     String name,email,uid,dp;
+    String stopID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_post);
+        stopID = getIntent().getStringExtra("stopID");
         actionBar = getSupportActionBar();
         actionBar.setTitle("Add New Post");
         //enable back button in actionbar
@@ -121,12 +123,22 @@ public class  AddPostActivity extends AppCompatActivity {
         descriptionEt=findViewById(R.id.pDescriptionEt);
         imageIv=findViewById(R.id.pImageIv);
         uploadBtn=findViewById(R.id.pUploadBtn);
+        addImageBtn=findViewById(R.id.addImage);
+
+        addImageBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                imageIv.setVisibility(View.VISIBLE);
+                showImagePickDialog();
+            }
+        });
+
 
         //get image from camera/gallery on click
         imageIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showImagePickDialog();
+
             }
         });
 
@@ -146,10 +158,10 @@ public class  AddPostActivity extends AppCompatActivity {
                 }
                 if(image_rui==null){
                     //post without image
-                    uploadData(title,description,"noImage");
+                    uploadData(title,description,"noImage",stopID);
                 }else{
                     //post with image
-                    uploadData(title,description,String.valueOf(image_rui));
+                    uploadData(title,description,String.valueOf(image_rui),stopID);
                 }
 
             }
@@ -157,7 +169,7 @@ public class  AddPostActivity extends AppCompatActivity {
 
     }
 
-    private void uploadData(String title, String description, String uri) {
+    private void uploadData(String title, String description, String uri, String stopId) {
         pd.setMessage("Publishing post....");
         pd.show();
 
@@ -193,6 +205,7 @@ public class  AddPostActivity extends AppCompatActivity {
                                 hashMap.put("pTime",timeStamp);
                                 hashMap.put("pLikes", "0");
                                 hashMap.put("pComments","0");
+                                hashMap.put("stopId",stopId);
 
                                 //path to storage post data
                                 DatabaseReference ref =FirebaseDatabase.getInstance().getReference("Posts");
@@ -249,6 +262,7 @@ public class  AddPostActivity extends AppCompatActivity {
             hashMap.put("pTime",timeStamp);
             hashMap.put("pLikes", "0");
             hashMap.put("pComments","0");
+            hashMap.put("stopId",stopId);
 
             //path to storage post data
             DatabaseReference ref =FirebaseDatabase.getInstance().getReference("Posts");
