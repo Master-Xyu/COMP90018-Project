@@ -66,7 +66,7 @@ public class AddPostActivity extends AppCompatActivity {
     //Views
     EditText  titleEt,descriptionEt;
     ImageView imageIv;
-    Button uploadBtn;
+    Button uploadBtn,addImageBtn;
 
     Uri image_rui=null;
 
@@ -123,12 +123,22 @@ public class AddPostActivity extends AppCompatActivity {
         descriptionEt=findViewById(R.id.pDescriptionEt);
         imageIv=findViewById(R.id.pImageIv);
         uploadBtn=findViewById(R.id.pUploadBtn);
+        addImageBtn=findViewById(R.id.addImage);
+
+        addImageBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                imageIv.setVisibility(View.VISIBLE);
+                showImagePickDialog();
+            }
+        });
+
 
         //get image from camera/gallery on click
         imageIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showImagePickDialog();
+
             }
         });
 
