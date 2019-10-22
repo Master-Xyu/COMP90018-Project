@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.animation.BounceInterpolator;
@@ -22,10 +23,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -45,9 +44,17 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -80,11 +87,12 @@ public class MapActivity extends AppCompatActivity implements
 
     private AutoCompleteTextView mSearchText;
 
+    private HashMap<Integer, Integer> alerts;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
+        retriveAlerts();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
         setTitle("");
@@ -394,6 +402,36 @@ public class MapActivity extends AppCompatActivity implements
         }
     }
 
+    private void retriveAlerts(){
+        HashMap<Integer, Integer> alerts = new HashMap();
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("Alerts");
+        mDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Long curTime = Long.parseLong(new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()));
+                for (DataSnapshot alertSnapshot : dataSnapshot.getChildren()) {
+                    int stopID = Integer.parseInt(alertSnapshot.getKey());
+                    int times = 0;
+                    for (DataSnapshot singleAlertSnapshot : alertSnapshot.getChildren()) {
+                        Long time = Long.parseLong(singleAlertSnapshot.getKey());
+                        if(curTime - time > 1000){
+                            singleAlertSnapshot.getRef().removeValue();
+                        }else{
+                            times++;
+                        }
+                    }
+                    alerts.put(stopID, times);
+                }
+                mDatabase.removeEventListener(this);
+            }
 
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w("Map", "Alerts retriving failed.", databaseError.toException());
+                // ...
+            }
+        });
+    }
 
 }

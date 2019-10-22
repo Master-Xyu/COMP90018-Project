@@ -1,39 +1,30 @@
 package com.example.goodgame;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.AttributeSet;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.fragment.app.FragmentTransaction;
 
-import com.example.goodgame.adapters.AdapterPost;
-import com.example.goodgame.models.ModelPost;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
-import java.util.List;
-import androidx.fragment.app.FragmentTransaction;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
 
 public class DetailActivity extends AppCompatActivity{
 
     private Button postBtn;
+    private Button alertBtn;
     FirebaseAuth firebaseAuth;
     private String stopID;
 
@@ -58,6 +49,14 @@ public class DetailActivity extends AppCompatActivity{
             @Override
             public void onClick(View view) {
                 openPostActivity();
+            }
+        });
+
+        alertBtn = (Button)findViewById(R.id.action_alert);
+        alertBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sendAlert();
             }
         });
 
@@ -174,7 +173,25 @@ public class DetailActivity extends AppCompatActivity{
 
     }
 
+    private void sendAlert(){
+        String timeStamp = new SimpleDateFormat("yyyymmddHHmmss").format(new Date());
+        DatabaseReference ref= FirebaseDatabase.getInstance().getReference("Alerts/" + stopID);
+        HashMap<Object,String> hashMap= new HashMap<>();
+        hashMap.put("timestamp",timeStamp);
+        ref.child(timeStamp).setValue(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Toast.makeText(DetailActivity.this,"Alert published",Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                //failed adding post in database
+                Toast.makeText(DetailActivity.this,""+e.getMessage(),Toast.LENGTH_SHORT).show();
+            }
+        });
 
+    }
 
 
 //    /*inflate options menu*/

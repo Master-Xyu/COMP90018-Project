@@ -1,5 +1,6 @@
 package com.example.goodgame;
 
+import android.app.Dialog;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -11,7 +12,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -21,18 +21,19 @@ public class ProfileCommentActivity extends AppCompatActivity {
     protected ArrayList<String> mDataset;
     protected ArrayList<String> mDataID;
     protected ArrayList<Integer> mDataType;
+    protected Dialog loadingDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_comment);
+        loadingDialog = LoadingUtils.createLoadingDialog(ProfileCommentActivity.this, "Loading...");
         initDataset();
     }
 
     private void initDataset() {
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("Posts");
         String UID = FirebaseAuth.getInstance().getUid();
-        Query query = mDatabase.equalTo(UID);
         mDataset = new ArrayList();
         mDataType = new ArrayList();
         mDataID = new ArrayList();
@@ -64,6 +65,7 @@ public class ProfileCommentActivity extends AppCompatActivity {
                 transaction.commit();
                 setTitle("Comments");
                 mDatabase.removeEventListener(this);
+                LoadingUtils.closeDialog(loadingDialog);
         }
 
             @Override
