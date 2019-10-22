@@ -45,8 +45,8 @@ public class DetailActivity extends AppCompatActivity{
 //        Intent intent = new Intent(DetailActivity.this,DetailFragment.class);
 //        startActivity(intent);
         transaction.replace(R.id.detail_fragment, fragment);
-        transaction.addToBackStack(fragment.toString());
-        transaction.setTransition(transaction.TRANSIT_FRAGMENT_OPEN);
+        //transaction.addToBackStack(fragment.toString());
+        //transaction.setTransition(transaction.TRANSIT_FRAGMENT_OPEN);
         transaction.commit();
         setTitle("Detail");
         postBtn = (Button)findViewById(R.id.action_add_post);
