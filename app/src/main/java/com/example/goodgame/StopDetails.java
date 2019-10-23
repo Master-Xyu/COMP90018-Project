@@ -37,9 +37,7 @@ public class StopDetails {
         return description;
     }
 
-    public Boolean getFreeZone() {
-        return isFreeZone;
-    }
+    public Boolean getFreeZone() { return isFreeZone; }
 
     public LatLng getPosition() {
         return position;

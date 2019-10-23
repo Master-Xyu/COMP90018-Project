@@ -163,6 +163,9 @@ public class AddPostActivity extends AppCompatActivity {
                     //post with image
                     uploadData(title,description,String.valueOf(image_rui),stopID);
                 }
+                Intent intent = new Intent(AddPostActivity.this,DetailActivity.class);
+                intent.putExtra("stopID",stopID);
+                startActivity(intent);
 
             }
         });
