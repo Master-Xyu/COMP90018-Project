@@ -19,7 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.goodgame.PostDetialActivity;
+import com.example.goodgame.PostDetailActivity;
 import com.example.goodgame.R;
 import com.example.goodgame.models.ModelPost;
 import com.google.firebase.auth.FirebaseAuth;
@@ -178,7 +178,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder>{
 //                Toast.makeText(context,"Comment",Toast.LENGTH_SHORT).show();
 
                 //start PostDetailAct
-                Intent intent=new Intent(context, PostDetialActivity.class);
+                Intent intent=new Intent(context, PostDetailActivity.class);
                 intent.putExtra("postId",pId);//will get detail of post using this id, its id of the post clicked
                 context.startActivity(intent);
 

@@ -45,7 +45,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-public class PostDetialActivity extends AppCompatActivity {
+public class PostDetailActivity extends AppCompatActivity {
 
     //to get detail of user and post
     String myUid,myEmail,myName,myDp,
@@ -408,7 +408,7 @@ public class PostDetialActivity extends AppCompatActivity {
                     public void onSuccess(Void aVoid) {
                         pd.dismiss();
 
-                        Toast.makeText(PostDetialActivity.this,"Comment added...",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(PostDetailActivity.this,"Comment added...",Toast.LENGTH_SHORT).show();
                          commentEt.setText("");
                         updataCommentCount();
 
@@ -419,7 +419,7 @@ public class PostDetialActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                        pd.dismiss();
-                        Toast.makeText(PostDetialActivity.this,""+e.getMessage(),Toast.LENGTH_SHORT).show();
+                        Toast.makeText(PostDetailActivity.this,""+e.getMessage(),Toast.LENGTH_SHORT).show();
 
 
                     }
@@ -579,7 +579,7 @@ public class PostDetialActivity extends AppCompatActivity {
 
         }
         else {
-            Intent intent=new Intent(PostDetialActivity.this,BaseActivity.class);
+            Intent intent=new Intent(PostDetailActivity.this,BaseActivity.class);
             startActivity(intent);
             finish();
 
