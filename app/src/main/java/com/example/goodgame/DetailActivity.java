@@ -1,5 +1,8 @@
 package com.example.goodgame;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -28,12 +31,15 @@ public class DetailActivity extends AppCompatActivity{
     private Button alertBtn;
     FirebaseAuth firebaseAuth;
     private String stopID;
+    AlertDialog ad;
+    protected Dialog loadingDialog;
 
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.details);
         stopID = getIntent().getStringExtra("stopID");
+        loadingDialog = LoadingUtils.createLoadingDialog(DetailActivity.this, "Loading...");
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         //DetailFragment fragment= new DetailFragment();
@@ -45,6 +51,7 @@ public class DetailActivity extends AppCompatActivity{
         //transaction.setTransition(transaction.TRANSIT_FRAGMENT_OPEN);
         transaction.commit();
         setTitle("Detail");
+        LoadingUtils.closeDialog(loadingDialog);
         postBtn = (Button)findViewById(R.id.action_add_post);
         postBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,22 +66,6 @@ public class DetailActivity extends AppCompatActivity{
             @Override
             public void onClick(View view) { sendAlert(); }
         });
-
-/*
-        if (!StopDetailsList.STOPS[Integer.parseInt(stopID)].getFreeZone()){
-            alertBtn.setVisibility(View.VISIBLE);
-            alertBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    sendAlert();
-                }
-            });
-        }
-
- */
-
-
-
 
         firebaseAuth=FirebaseAuth.getInstance();
 //
