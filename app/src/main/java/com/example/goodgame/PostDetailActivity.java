@@ -508,6 +508,7 @@ public class PostDetailActivity extends AppCompatActivity {
                     String uEmail=""+ds.child("uEmail").getValue();
                     hisName=""+ds.child("uName").getValue();
                     String commentCount=""+ds.child("pComments").getValue();
+                    String photo = "" + ds.child("avatar").getValue();
 
                     //convert timestamp to dd/mm/yyy hh:mm am/pm
                     Calendar calendar=Calendar.getInstance(Locale.getDefault());
@@ -542,7 +543,8 @@ public class PostDetailActivity extends AppCompatActivity {
 
                     //set user image in comment part
                     try{
-                        Picasso.get().load(hisDp).placeholder(R.drawable.default_avatar).into(uPictureIv);
+                        Uri uri = Uri.parse(photo);
+                        Picasso.get().load(uri).into(uPictureIv);
 
                     }catch (Exception e){
                         Picasso.get().load(R.drawable.default_avatar).into(uPictureIv);

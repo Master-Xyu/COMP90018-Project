@@ -209,7 +209,8 @@ public class AddPostActivity extends AppCompatActivity {
                                 hashMap.put("pLikes", "0");
                                 hashMap.put("pComments","0");
                                 hashMap.put("stopId",stopId);
-                                hashMap.put("avatar",UserProfileActivity.avatar_uri_.toString());
+                                hashMap.put("avatar",firebaseAuth.getCurrentUser().getPhotoUrl().toString());
+
 
                                 //path to storage post data
                                 DatabaseReference ref =FirebaseDatabase.getInstance().getReference("Posts");
@@ -267,6 +268,7 @@ public class AddPostActivity extends AppCompatActivity {
             hashMap.put("pLikes", "0");
             hashMap.put("pComments","0");
             hashMap.put("stopId",stopId);
+            hashMap.put("avatar",firebaseAuth.getCurrentUser().getPhotoUrl().toString());
 
             //path to storage post data
             DatabaseReference ref =FirebaseDatabase.getInstance().getReference("Posts");

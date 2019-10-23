@@ -99,6 +99,8 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder>{
         holder.pDescriptionTV.setText(pDescription);
         holder.pLikesTv.setText(pLikes+" Likes");
         holder.pCommentsTv.setText(pComments+" Comments");
+
+
         //set likes for each post
         setLikes(holder,pId);
 
@@ -109,12 +111,14 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder>{
 //       catch (Exception e){
 //
 //       }
-
+        try {
+            Picasso.get().load(postList.get(position).getAvatar()).into(holder.uPictureIv);
+        }catch (Exception e){
+            Picasso.get().load(R.drawable.default_avatar).into(holder.uPictureIv);
+        }
        //set post image
         if (pImage.equals("noImage")){
             holder.pImageIv.setVisibility(View.GONE);
-
-
 
         }
         else{
