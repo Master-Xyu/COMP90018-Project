@@ -39,7 +39,7 @@ public class UserProfileActivity extends AppCompatActivity {
     TextView name_;
     TextView email_;
     String TAG = "Profile";
-    Uri avatar_uri_;
+    static Uri avatar_uri_;
     public static final int REQUSET = 1;
     Dialog mCameraDialog_;
 
