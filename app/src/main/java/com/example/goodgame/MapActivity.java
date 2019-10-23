@@ -75,8 +75,8 @@ public class MapActivity extends AppCompatActivity implements
 
     private static LatLng myLocation;
 
-    private int[]score={20,30,40,50,60,70,80,90,20,30,40,50,60,70,80,90,70,80,90};
-
+    //private int[]score={20,30,40,50,60,70,80,90,20,30,40,50,60,70,80,90,70,80,90,90,90,90,90,90,90,90,90,10,10,10};
+    private int[]score=new int[StopDetailsList.STOPS.length];
     private List<Marker> mMarker;
 
     private Marker mSelectedMarker;
@@ -107,6 +107,10 @@ public class MapActivity extends AppCompatActivity implements
         if(u != null){
             BaseApplication.changeImage(u);
         }
+
+        //for (int i=0;i<StopDetailsList.STOPS.length;i++){
+        //    score[i]=StopDetailsList.STOPS[i].getId();}
+
 
         Button btnMap = (Button) findViewById(R.id.btnMap);
         btnMap.setOnClickListener(new View.OnClickListener() {
@@ -198,6 +202,8 @@ public class MapActivity extends AppCompatActivity implements
                         .build();
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bounds.getCenter(), 15));
 
+                retriveAlerts();
+
             }
 
             @Override
@@ -250,7 +256,7 @@ public class MapActivity extends AppCompatActivity implements
         // Ideally this string would be localised.
         mMap.setContentDescription("Map with lots of markers.");
 
-        addMarkersToMap();
+        //addMarkersToMap();
 
     }
 
@@ -295,6 +301,7 @@ public class MapActivity extends AppCompatActivity implements
     }
 
     private void addMarkersToMap() {
+        mMap.clear();
         mMarker = new ArrayList<>();
         for (int i=0; i<StopDetailsList.STOPS.length;i++){
             Marker m = mMap.addMarker(new MarkerOptions()
@@ -310,11 +317,11 @@ public class MapActivity extends AppCompatActivity implements
 
 
     public BitmapDescriptor getIcon(int score){
-        if (score<=30){
+        if (score==0){
             //safe
             return BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
         }
-        else if(score>30 && score<80){
+        else if(score>0 && score<=10){
             return BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE);
         }
         else{
@@ -422,6 +429,15 @@ public class MapActivity extends AppCompatActivity implements
                     }
                     alerts.put(stopID, times);
                 }
+                for (int i=0;i<StopDetailsList.STOPS.length;i++){
+                    if (alerts.containsKey(i+1)){
+                        score[i]=alerts.get(i+1);
+                    }
+                    else {
+                        score[i]=0;
+                    }
+                }
+                addMarkersToMap();
                 mDatabase.removeEventListener(this);
             }
 

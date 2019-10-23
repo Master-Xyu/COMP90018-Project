@@ -2,6 +2,7 @@ package com.example.goodgame;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -53,12 +54,27 @@ public class DetailActivity extends AppCompatActivity{
         });
 
         alertBtn = (Button)findViewById(R.id.action_alert);
+
         alertBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                sendAlert();
-            }
+            public void onClick(View view) { sendAlert(); }
         });
+
+/*
+        if (!StopDetailsList.STOPS[Integer.parseInt(stopID)].getFreeZone()){
+            alertBtn.setVisibility(View.VISIBLE);
+            alertBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    sendAlert();
+                }
+            });
+        }
+
+ */
+
+
+
 
         firebaseAuth=FirebaseAuth.getInstance();
 //
@@ -225,5 +241,14 @@ public class DetailActivity extends AppCompatActivity{
             startActivity(new Intent(DetailActivity.this,MapActivity.class));
             finish();
         }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK ) {
+            Intent intent = new Intent(DetailActivity.this, MapActivity.class);
+            startActivity(intent);
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

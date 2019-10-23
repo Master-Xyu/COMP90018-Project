@@ -126,11 +126,7 @@ public class DetailFragment extends Fragment {
                     recyclerView.setAdapter(adapterPost);
 
                      */
-                    System.out.println("**********************");
-                    System.out.println("**********************");
-                    System.out.println(stopID);
-                    System.out.println("**********************");
-                    System.out.println("**********************");
+
                     if (modelPost.getStopId().equals(stopID)){
                         postList.add(modelPost);
 
