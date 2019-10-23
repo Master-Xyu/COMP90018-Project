@@ -29,14 +29,15 @@
 
         <TextView
             android:id="@+id/textView"
-            android:layout_width="307dp"
+            android:layout_width="270dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="TextView"
-            android:gravity="center"/>
+            android:gravity="center"
+            android:text="TextView" />
 
         <Button
             android:id="@+id/delete"
+            style="@android:style/Widget.Holo.Button"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
