@@ -421,7 +421,7 @@ public class MapActivity extends AppCompatActivity implements
                     int times = 0;
                     for (DataSnapshot singleAlertSnapshot : alertSnapshot.getChildren()) {
                         Long time = Long.parseLong(singleAlertSnapshot.getKey());
-                        if(curTime - time > 1000){
+                        if(curTime - time > 10000){
                             singleAlertSnapshot.getRef().removeValue();
                         }else{
                             times++;

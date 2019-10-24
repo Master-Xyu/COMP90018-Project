@@ -2,7 +2,6 @@ package com.example.goodgame;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -181,8 +180,8 @@ public class DetailActivity extends AppCompatActivity{
     }
 
     private void sendAlert(){
-        String timeStamp = new SimpleDateFormat("yyyymmddHHmmss").format(new Date());
-        DatabaseReference ref= FirebaseDatabase.getInstance().getReference("Alerts/" + stopID);
+        String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+       DatabaseReference ref= FirebaseDatabase.getInstance().getReference("Alerts/" + stopID);
         HashMap<Object,String> hashMap= new HashMap<>();
         hashMap.put("timestamp",timeStamp);
         ref.child(timeStamp).setValue(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
